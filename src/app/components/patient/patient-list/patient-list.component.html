@@ -92,10 +92,12 @@
                             <button mat-icon-button color="primary" matTooltip="View Details">
                                 <mat-icon>visibility</mat-icon>
                             </button>
-                            <button mat-icon-button color="accent" matTooltip="Edit Patient">
+                            <button mat-icon-button color="accent" matTooltip="Edit Patient"
+                                (click)="editPatient(patient)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" matTooltip="Delete Patient">
+                            <button mat-icon-button color="warn" matTooltip="Delete Patient"
+                                (click)="deletePatient(patient)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </div>

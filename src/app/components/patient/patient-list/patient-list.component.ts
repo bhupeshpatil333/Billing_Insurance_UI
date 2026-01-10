@@ -8,6 +8,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/confirm-dialog.component';
+import { PatientEditDialogComponent } from '../../shared/dialogs/patient-edit-dialog/patient-edit-dialog.component';
 
 @Component({
   selector: 'app-patient-list',
@@ -26,7 +29,10 @@ export class PatientListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private patientService: PatientService) {
+  constructor(
+    private patientService: PatientService,
+    private dialog: MatDialog
+  ) {
     this.dataSource = new MatTableDataSource<any>([]);
   }
 
@@ -64,6 +70,66 @@ export class PatientListComponent implements OnInit, OnDestroy {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  editPatient(patient: any): void {
+    const dialogRef = this.dialog.open(PatientEditDialogComponent, {
+      width: '600px',
+      data: patient
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update patient with result data
+        const updatedPatient = { ...patient, ...result };
+
+        // Call service to update (assuming updatePatient method exists)
+        this.patientService.updatePatient(patient.patientId || patient.id, updatedPatient)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              // Refresh the list
+              this.loadPatients();
+              alert('Patient updated successfully!');
+            },
+            error: (error) => {
+              console.error('Error updating patient:', error);
+              alert('Error updating patient. Please try again.');
+            }
+          });
+      }
+    });
+  }
+
+  deletePatient(patient: any): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Patient',
+        message: `Are you sure you want to delete ${patient.fullName}? This action cannot be undone.`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Call service to delete
+        this.patientService.deletePatient(patient.patientId || patient.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              // Refresh the list
+              this.loadPatients();
+              alert('Patient deleted successfully!');
+            },
+            error: (error) => {
+              console.error('Error deleting patient:', error);
+              alert('Error deleting patient. Please try again.');
+            }
+          });
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -55,11 +55,11 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex space-x-2">
-                                <button
+                                <button (click)="editUser(user)"
                                     class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors font-medium">
                                     Edit
                                 </button>
-                                <button
+                                <button (click)="deleteUser(user)"
                                     class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors font-medium">
                                     Delete
                                 </button>
