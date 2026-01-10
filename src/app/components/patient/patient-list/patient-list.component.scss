@@ -1,0 +1,58 @@
+// Material Table Customization with Tailwind
+::ng-deep {
+
+    // Form field styling
+    .mat-mdc-form-field {
+        width: 100%;
+    }
+
+    // Table styling
+    .mat-mdc-table {
+        background: transparent;
+    }
+
+    .mat-mdc-header-row {
+        background: linear-gradient(to right, #4f46e5, #7c3aed);
+    }
+
+    .mat-mdc-header-cell {
+        color: white !important;
+        font-weight: 600;
+        border-bottom: none !important;
+    }
+
+    .mat-mdc-row:hover {
+        background-color: #eef2ff;
+    }
+
+    .mat-mdc-cell {
+        border-bottom-color: #e5e7eb !important;
+    }
+
+    // Paginator styling
+    .mat-mdc-paginator {
+        background: white;
+    }
+
+    .mat-mdc-paginator-container {
+        padding: 1rem 1.5rem;
+    }
+
+    // Icon button colors
+    .mat-mdc-icon-button.mat-primary {
+        color: #4f46e5;
+    }
+
+    .mat-mdc-icon-button.mat-accent {
+        color: #10b981;
+    }
+
+    .mat-mdc-icon-button.mat-warn {
+        color: #ef4444;
+    }
+
+    // Sort header
+    .mat-sort-header-arrow {
+        color: white !important;
+    }
+}

@@ -1,0 +1,144 @@
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Patient Management</h1>
+            <p class="text-gray-600">View and manage all registered patients</p>
+        </div>
+        <button
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+            <span class="mr-2">➕</span>
+            Add Patient
+        </button>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex items-center space-x-4">
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Search Patients</mat-label>
+                <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter($event)"
+                    placeholder="Search by name, email, or mobile" class="text-gray-700">
+                <mat-icon matPrefix class="text-gray-400">search</mat-icon>
+                <button *ngIf="filterValue" matSuffix mat-icon-button (click)="clearFilter()"
+                    class="text-gray-400 hover:text-gray-600">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+            <div class="text-sm text-gray-600">
+                <span class="font-semibold">{{ dataSource.filteredData.length }}</span> patients found
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Table -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table mat-table [dataSource]="dataSource" matSort class="w-full">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                        Name
+                    </th>
+                    <td mat-cell *matCellDef="let patient" class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                                {{ patient.fullName?.charAt(0) || 'P' }}
+                            </div>
+                            <span class="font-medium text-gray-800">{{ patient.fullName }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                        Email
+                    </th>
+                    <td mat-cell *matCellDef="let patient" class="px-6 py-4 text-gray-600">
+                        <span class="flex items-center">
+                            <mat-icon class="text-gray-400 mr-2 text-sm">email</mat-icon>
+                            {{ patient.email }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Mobile Column -->
+                <ng-container matColumnDef="mobile">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                        Mobile
+                    </th>
+                    <td mat-cell *matCellDef="let patient" class="px-6 py-4 text-gray-600">
+                        <span class="flex items-center">
+                            <mat-icon class="text-gray-400 mr-2 text-sm">phone</mat-icon>
+                            {{ patient.mobile }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                        Actions
+                    </th>
+                    <td mat-cell *matCellDef="let patient" class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button mat-icon-button color="primary" matTooltip="View Details">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                            <button mat-icon-button color="accent" matTooltip="Edit Patient">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" matTooltip="Delete Patient">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Header and Row Declarations -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    class="hover:bg-indigo-50 transition-colors cursor-pointer"></tr>
+
+                <!-- No Data Row -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                        <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+                            <mat-icon class="text-6xl mb-4">people_outline</mat-icon>
+                            <p class="text-lg font-semibold">No patients found</p>
+                            <p class="text-sm" *ngIf="filterValue">Try adjusting your search criteria</p>
+                            <p class="text-sm" *ngIf="!filterValue">Add your first patient to get started</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="10" showFirstLastButtons
+            class="border-t border-gray-200">
+        </mat-paginator>
+    </div>
+
+    <!-- Table Info -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <div class="flex items-start">
+            <mat-icon class="text-blue-600 mr-3">info</mat-icon>
+            <div>
+                <h3 class="text-lg font-semibold text-blue-900 mb-2">Table Features</h3>
+                <ul class="text-blue-800 text-sm space-y-1">
+                    <li>• <strong>Search:</strong> Filter patients by name, email, or mobile number</li>
+                    <li>• <strong>Sort:</strong> Click column headers to sort data</li>
+                    <li>• <strong>Pagination:</strong> Navigate through pages and adjust items per page</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

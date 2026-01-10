@@ -1,0 +1,204 @@
+<div class="space-y-6">
+
+    <!-- Admin Dashboard -->
+    <div *ngIf="auth.isAdmin()" class="space-y-6">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Admin Overview Dashboard</h1>
+            <p class="text-gray-600">Complete system overview and analytics</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Patients Card -->
+            <div
+                class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium mb-1">Total Patients</p>
+                        <h3 class="text-4xl font-bold">{{ stats.patients }}</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <span class="text-5xl">👥</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-blue-100 text-sm">
+                    <span class="mr-2">📈</span>
+                    <span>Active patients in system</span>
+                </div>
+            </div>
+
+            <!-- Total Bills Card -->
+            <div
+                class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm font-medium mb-1">Total Bills</p>
+                        <h3 class="text-4xl font-bold">{{ stats.bills }}</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <span class="text-5xl">📄</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-purple-100 text-sm">
+                    <span class="mr-2">💼</span>
+                    <span>Generated invoices</span>
+                </div>
+            </div>
+
+            <!-- Total Revenue Card -->
+            <div
+                class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-all duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm font-medium mb-1">Total Revenue</p>
+                        <h3 class="text-4xl font-bold">₹{{ stats.revenue | number:'1.0-0' }}</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <span class="text-5xl">💰</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-green-100 text-sm">
+                    <span class="mr-2">💵</span>
+                    <span>Total earnings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a routerLink="/users"
+                    class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer group">
+                    <span class="text-4xl mb-2 group-hover:scale-110 transition-transform">👤</span>
+                    <span class="text-sm font-semibold text-gray-700">Manage Users</span>
+                </a>
+                <a routerLink="/patients"
+                    class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer group">
+                    <span class="text-4xl mb-2 group-hover:scale-110 transition-transform">👥</span>
+                    <span class="text-sm font-semibold text-gray-700">View Patients</span>
+                </a>
+                <a routerLink="/billing"
+                    class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer group">
+                    <span class="text-4xl mb-2 group-hover:scale-110 transition-transform">💰</span>
+                    <span class="text-sm font-semibold text-gray-700">Generate Bill</span>
+                </a>
+                <a routerLink="/reports"
+                    class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer group">
+                    <span class="text-4xl mb-2 group-hover:scale-110 transition-transform">📈</span>
+                    <span class="text-sm font-semibold text-gray-700">View Reports</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Billing Staff Dashboard -->
+    <div *ngIf="auth.isBilling()" class="space-y-6">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="flex items-center mb-6">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                    <span class="text-4xl">💰</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Billing Summary</h1>
+                    <p class="text-gray-600">Manage billing and payment operations</p>
+                </div>
+            </div>
+
+            <!-- Billing Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Total Bills</h3>
+                        <span class="text-3xl">📄</span>
+                    </div>
+                    <p class="text-4xl font-bold text-blue-600">{{ stats.bills }}</p>
+                    <p class="text-sm text-gray-600 mt-2">Generated this month</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border-2 border-green-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Revenue</h3>
+                        <span class="text-3xl">💵</span>
+                    </div>
+                    <p class="text-4xl font-bold text-green-600">₹{{ stats.revenue | number:'1.0-0' }}</p>
+                    <p class="text-sm text-gray-600 mt-2">Total collected</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <a routerLink="/billing"
+                        class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border-2 border-blue-200">
+                        <span class="text-3xl mr-3">💰</span>
+                        <span class="font-semibold text-gray-700">Generate Bill</span>
+                    </a>
+                    <a routerLink="/payments"
+                        class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors border-2 border-green-200">
+                        <span class="text-3xl mr-3">💳</span>
+                        <span class="font-semibold text-gray-700">Process Payment</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insurance Staff Dashboard -->
+    <div *ngIf="auth.isInsurance()" class="space-y-6">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="flex items-center mb-6">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mr-4">
+                    <span class="text-4xl">🏥</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Insurance Claims Overview</h1>
+                    <p class="text-gray-600">Manage insurance policies and claims</p>
+                </div>
+            </div>
+
+            <!-- Insurance Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-lg p-6 border-2 border-green-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Active Policies</h3>
+                        <span class="text-3xl">📋</span>
+                    </div>
+                    <p class="text-4xl font-bold text-green-600">{{ stats.patients }}</p>
+                    <p class="text-sm text-gray-600 mt-2">Currently active</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-6 border-2 border-blue-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Claims Processed</h3>
+                        <span class="text-3xl">✅</span>
+                    </div>
+                    <p class="text-4xl font-bold text-blue-600">{{ stats.bills }}</p>
+                    <p class="text-sm text-gray-600 mt-2">This month</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <a routerLink="/insurance"
+                        class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors border-2 border-green-200">
+                        <span class="text-3xl mr-3">🏥</span>
+                        <span class="font-semibold text-gray-700">Assign Policy</span>
+                    </a>
+                    <a routerLink="/patients"
+                        class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border-2 border-blue-200">
+                        <span class="text-3xl mr-3">👥</span>
+                        <span class="font-semibold text-gray-700">View Patients</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

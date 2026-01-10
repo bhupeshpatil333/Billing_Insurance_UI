@@ -1,0 +1,56 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+        <!-- Icon -->
+        <div
+            class="w-24 h-24 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <span class="text-6xl">🚫</span>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Access Denied</h2>
+
+        <!-- Message -->
+        <p class="text-gray-600 mb-8">
+            You do not have permission to access this page. Please contact your administrator if you believe this is an
+            error.
+        </p>
+
+        <!-- Error Details Card -->
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-8 text-left">
+            <div class="flex items-start">
+                <span class="text-2xl mr-3">⚠️</span>
+                <div>
+                    <h3 class="text-sm font-semibold text-red-900 mb-1">Authorization Required</h3>
+                    <p class="text-xs text-red-700">
+                        This resource requires specific permissions that your account doesn't have.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+            <button routerLink="/dashboard"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 transform hover:scale-105">
+                <span class="mr-2">🏠</span>
+                Go to Dashboard
+            </button>
+
+            <button routerLink="/login"
+                class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <span class="mr-2">🔑</span>
+                Login with Different Account
+            </button>
+        </div>
+
+        <!-- Help Text -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <p class="text-xs text-gray-500">
+                Need help? Contact support at
+                <a href="mailto:support@medicare.com" class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                    support@medicare.com
+                </a>
+            </p>
+        </div>
+    </div>
+</div>

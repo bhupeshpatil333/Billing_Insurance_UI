@@ -1,0 +1,61 @@
+// Material Table & Form Field Customization with Tailwind
+::ng-deep {
+
+    // Form field styling
+    .mat-mdc-form-field {
+        width: 100%;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        background: white;
+    }
+
+    // Table styling
+    .mat-mdc-table {
+        background: transparent;
+    }
+
+    .mat-mdc-header-row {
+        background: linear-gradient(to right, #4f46e5, #7c3aed);
+    }
+
+    .mat-mdc-header-cell {
+        color: white !important;
+        font-weight: 600;
+        border-bottom: none !important;
+    }
+
+    .mat-mdc-row:hover {
+        background-color: #eef2ff;
+    }
+
+    .mat-mdc-cell {
+        border-bottom-color: #e5e7eb !important;
+    }
+
+    // Button styling
+    .mat-mdc-raised-button.mat-primary {
+        background: linear-gradient(to right, #4f46e5, #7c3aed) !important;
+        color: white !important;
+    }
+
+    .mat-mdc-raised-button.mat-accent {
+        background: linear-gradient(to right, #10b981, #059669) !important;
+        color: white !important;
+    }
+
+    .mat-mdc-raised-button:disabled {
+        opacity: 0.5;
+    }
+
+    // Select dropdown
+    .mat-mdc-select-value {
+        color: #1f2937;
+        font-weight: 500;
+    }
+
+    // Icon styling
+    .mat-icon {
+        vertical-align: middle;
+    }
+}

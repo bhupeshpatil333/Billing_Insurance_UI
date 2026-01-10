@@ -1,0 +1,97 @@
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">User Management</h1>
+            <p class="text-gray-600">Manage system users and their roles</p>
+        </div>
+        <button
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+            <span class="mr-2">➕</span>
+            Add User
+        </button>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr *ngFor="let user of users; let i = index" class="hover:bg-indigo-50 transition-colors"
+                        [class.bg-gray-50]="i % 2 === 0">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                                    {{ user.name.charAt(0) || 'U' }}
+                                </div>
+                                <span class="font-medium text-gray-800">{{ user.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600">
+                            <span class="flex items-center">
+                                <span class="mr-2">📧</span>
+                                {{ user.email }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+                                [class.bg-purple-100]="user.role === 'Admin'"
+                                [class.text-purple-800]="user.role === 'Admin'"
+                                [class.bg-blue-100]="user.role === 'BillingStaff'"
+                                [class.text-blue-800]="user.role === 'BillingStaff'"
+                                [class.bg-green-100]="user.role === 'InsuranceStaff'"
+                                [class.text-green-800]="user.role === 'InsuranceStaff'">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button
+                                    class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors font-medium">
+                                    Edit
+                                </button>
+                                <button
+                                    class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors font-medium">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="users.length === 0">
+                        <td colspan="4" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center text-gray-400">
+                                <span class="text-6xl mb-4">👥</span>
+                                <p class="text-lg font-semibold">No users found</p>
+                                <p class="text-sm">Add your first user to get started</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
+        <div class="flex items-start">
+            <span class="text-3xl mr-4">ℹ️</span>
+            <div>
+                <h3 class="text-lg font-semibold text-purple-900 mb-2">User Roles</h3>
+                <ul class="text-purple-800 text-sm space-y-1">
+                    <li><strong>Admin:</strong> Full system access and user management</li>
+                    <li><strong>BillingStaff:</strong> Access to billing and payment features</li>
+                    <li><strong>InsuranceStaff:</strong> Access to insurance policy management</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

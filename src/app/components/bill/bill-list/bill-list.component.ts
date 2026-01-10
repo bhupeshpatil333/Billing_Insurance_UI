@@ -1,0 +1,198 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, ActivatedRoute } from '@angular/router';
+import { MaterialModule } from '../../shared/material.module';
+import { BillingService } from '../../../core/services/billing.service';
+import { PatientService } from '../../../core/services/patient.service';
+import { InsuranceService } from '../../../core/services/insurance.service';
+import { PaymentService } from '../../../core/services/payment.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+interface Service {
+  serviceId?: string;
+  serviceName: string;
+  cost: number;
+  quantity: number;
+}
+
+@Component({
+  selector: 'app-bill-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule, MaterialModule, FormsModule],
+  templateUrl: './bill-list.component.html',
+  styleUrl: './bill-list.component.scss'
+})
+export class BillListComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  // Data
+  patients: any[] = [];
+  services: Service[] = [
+    { serviceName: 'Consultation', cost: 500, quantity: 0 },
+    { serviceName: 'X-Ray', cost: 1000, quantity: 0 },
+    { serviceName: 'Blood Test', cost: 800, quantity: 0 },
+    { serviceName: 'ECG', cost: 600, quantity: 0 },
+    { serviceName: 'MRI Scan', cost: 5000, quantity: 0 },
+    { serviceName: 'CT Scan', cost: 4000, quantity: 0 },
+    { serviceName: 'Ultrasound', cost: 1200, quantity: 0 }
+  ];
+
+  // Form data
+  patientId: string = '';
+  insuranceCoverage: number = 0;
+
+  // Calculations
+  grossAmount: number = 0;
+  insuranceAmount: number = 0;
+  netPayable: number = 0;
+
+  // Result
+  billResult: any = null;
+
+  // Table columns
+  displayedColumns: string[] = ['service', 'cost', 'qty'];
+
+  constructor(
+    private route: ActivatedRoute,
+    private patientService: PatientService,
+    private billingService: BillingService,
+    private insuranceService: InsuranceService,
+    private paymentService: PaymentService
+  ) { }
+
+  ngOnInit(): void {
+    this.loadPatients();
+  }
+
+  loadPatients(): void {
+    this.patientService.getPatients()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.patients = res;
+        },
+        error: (error) => {
+          console.error('Error fetching patients:', error);
+        }
+      });
+  }
+
+  onPatientChange(): void {
+    if (!this.patientId) {
+      this.insuranceCoverage = 0;
+      this.calculateBill();
+      return;
+    }
+
+    // Get active insurance policy for selected patient
+    this.insuranceService.getPoliciesByPatient(this.patientId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (policies: any[]) => {
+          // Assuming first policy is active and has coveragePercentage
+          if (policies && policies.length > 0) {
+            this.insuranceCoverage = policies[0]?.coveragePercentage || 0;
+          } else {
+            this.insuranceCoverage = 0;
+          }
+          this.calculateBill();
+        },
+        error: (error) => {
+          console.error('Error fetching insurance:', error);
+          this.insuranceCoverage = 0;
+          this.calculateBill();
+        }
+      });
+  }
+
+  calculateBill(): void {
+    // Calculate gross amount from selected services
+    this.grossAmount = this.services
+      .filter(s => s.quantity > 0)
+      .reduce((sum, s) => sum + (s.cost * s.quantity), 0);
+
+    // Calculate insurance deduction
+    this.insuranceAmount = (this.grossAmount * this.insuranceCoverage) / 100;
+
+    // Calculate net payable
+    this.netPayable = this.grossAmount - this.insuranceAmount;
+  }
+
+  generateBill(): void {
+    if (!this.patientId || this.grossAmount === 0) {
+      alert('Please select a patient and at least one service');
+      return;
+    }
+
+    const selectedServices = this.services.filter(s => s.quantity > 0);
+
+    const payload = {
+      patientId: this.patientId,
+      grossAmount: this.grossAmount,
+      insuranceAmount: this.insuranceAmount,
+      netPayable: this.netPayable,
+      services: selectedServices.map(s => ({
+        serviceName: s.serviceName,
+        cost: s.cost,
+        quantity: s.quantity
+      }))
+    };
+
+    this.billingService.generateBill(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.billResult = res;
+          alert('Bill generated successfully!');
+        },
+        error: (error) => {
+          console.error('Error generating bill:', error);
+          alert('Error generating bill. Please try again.');
+        }
+      });
+  }
+
+  makePayment(): void {
+    if (!this.billResult) {
+      alert('Please generate a bill first');
+      return;
+    }
+
+    const payload = {
+      billId: this.billResult.id || this.billResult.billId,
+      amount: this.netPayable,
+      paymentMethod: 'UPI',
+      date: new Date()
+    };
+
+    this.paymentService.makePayment(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          alert('Payment Successful!');
+          this.resetForm();
+        },
+        error: (error) => {
+          console.error('Error processing payment:', error);
+          alert('Payment failed. Please try again.');
+        }
+      });
+  }
+
+  resetForm(): void {
+    this.patientId = '';
+    this.insuranceCoverage = 0;
+    this.grossAmount = 0;
+    this.insuranceAmount = 0;
+    this.netPayable = 0;
+    this.billResult = null;
+    this.services.forEach(s => s.quantity = 0);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}
