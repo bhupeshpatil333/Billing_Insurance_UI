@@ -133,6 +133,11 @@
                 Generate Bill
             </button>
         </div>
+
+        <button mat-raised-button color="primary" *ngIf="billResult" (click)="downloadInvoice()">
+            Download Invoice PDF
+        </button>
+
     </div>
 
     <!-- Payment Card (Shows after bill is generated) -->

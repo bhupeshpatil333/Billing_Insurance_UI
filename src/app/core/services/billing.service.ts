@@ -58,5 +58,13 @@ export class BillingService {
     console.error('Billing Service Error:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
+  downloadInvoice(billId: string) {
+    return this.http.get(
+      `${this.api}/${billId}/invoice`,
+      { responseType: 'blob' }
+    );
+  }
+
 }
 

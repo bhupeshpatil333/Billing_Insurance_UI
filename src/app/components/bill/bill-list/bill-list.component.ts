@@ -154,6 +154,19 @@ export class BillListComponent implements OnInit, OnDestroy {
       });
   }
 
+  downloadInvoice() {
+    this.billingService.downloadInvoice(this.billResult.billId)
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Invoice.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
+
   makePayment(): void {
     if (!this.billResult) {
       alert('Please generate a bill first');

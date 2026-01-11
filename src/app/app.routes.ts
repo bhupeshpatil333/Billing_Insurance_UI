@@ -11,6 +11,7 @@ import { BillFormComponent } from './components/bill/bill-form/bill-form.compone
 import { BillListComponent } from './components/bill/bill-list/bill-list.component';
 import { PaymentFormComponent } from './components/payment/payment-form/payment-form.component';
 import { UserListComponent } from './components/user/user-list/user-list.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 export const routes: Routes = [
   // Public routes
@@ -57,12 +58,19 @@ export const routes: Routes = [
       { path: 'payments', component: PaymentFormComponent },
 
       // Reports - Admin only
+      // {
+      //   path: 'reports',
+      //   component: DashboardComponent, // Placeholder - create reports component later
+      //   canActivate: [roleGuard],
+      //   data: { roles: ['Admin'] }
+      // }
       {
         path: 'reports',
-        component: DashboardComponent, // Placeholder - create reports component later
-        canActivate: [roleGuard],
-        data: { roles: ['Admin'] }
+        component: ReportsComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'Accountant'] }
       }
+
     ]
   },
 

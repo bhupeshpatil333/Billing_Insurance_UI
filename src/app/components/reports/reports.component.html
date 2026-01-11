@@ -1,0 +1,31 @@
+<mat-card>
+    <mat-form-field>
+        <mat-label>From</mat-label>
+        <input matInput type="date" [(ngModel)]="fromDate">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>To</mat-label>
+        <input matInput type="date" [(ngModel)]="toDate">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="loadReports()">
+        Generate Report
+    </button>
+</mat-card>
+
+
+<mat-card *ngIf="paymentReport">
+    <h3>Payment Report</h3>
+
+    <p>Total Collected: ₹{{paymentReport.totalCollected}}</p>
+    <p>Pending Amount: ₹{{paymentReport.pendingAmount}}</p>
+</mat-card>
+
+
+<mat-card *ngIf="paymentReport">
+    <h3>Payment Report</h3>
+
+    <p>Total Collected: ₹{{paymentReport.totalCollected}}</p>
+    <p>Pending Amount: ₹{{paymentReport.pendingAmount}}</p>
+</mat-card>
