@@ -4,12 +4,17 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface Patient {
-  id?: string;
-  name: string;
-  email: string;
-  phone: string;
-  dateOfBirth: Date;
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface Patient {
+  patientId?: number;
+  fullName: string;
+  mobile: string;
+  dob: string;
 }
 
 @Injectable({
@@ -23,10 +28,16 @@ export class PatientService {
 
   constructor(private http: HttpClient) { }
 
-  addPatient(data: any): Observable<Patient> {
-    return this.http.post<Patient>(this.api, data).pipe(
-      tap(patient => {
-        console.log('Patient added:', patient);
+  addPatient(data: any): Observable<number> {
+    return this.http.post<ApiResponse<number>>(this.api, data).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
+      tap(patientId => {
+        console.log('Patient added with ID:', patientId);
         this.refreshPatients();
       }),
       catchError(this.handleError)
@@ -34,7 +45,13 @@ export class PatientService {
   }
 
   getPatients(): Observable<Patient[]> {
-    return this.http.get<Patient[]>(this.api).pipe(
+    return this.http.get<ApiResponse<Patient[]>>(this.api).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(patients => {
         console.log(`Retrieved ${patients.length} patients`);
         this.patientsSubject.next(patients);
@@ -43,15 +60,27 @@ export class PatientService {
     );
   }
 
-  getPatientById(id: string): Observable<Patient> {
-    return this.http.get<Patient>(`${this.api}/${id}`).pipe(
-      tap(patient => console.log('Patient retrieved:', patient)),
+  getPatientById(id: number): Observable<Patient> {
+    return this.http.get<ApiResponse<Patient>>(`${this.api}/${id}`).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
+      tap(patient => console.log('Retrieved patient:', patient)),
       catchError(this.handleError)
     );
   }
 
-  updatePatient(id: string, data: any): Observable<Patient> {
-    return this.http.put<Patient>(`${this.api}/${id}`, data).pipe(
+  updatePatient(id: number, data: Patient): Observable<Patient> {
+    return this.http.put<ApiResponse<Patient>>(`${this.api}/${id}`, data).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(patient => {
         console.log('Patient updated:', patient);
         this.refreshPatients();
@@ -60,28 +89,19 @@ export class PatientService {
     );
   }
 
-  deletePatient(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+  deletePatient(id: number): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.api}/${id}`).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(() => {
         console.log('Patient deleted');
         this.refreshPatients();
       }),
       catchError(this.handleError)
-    );
-  }
-
-  searchPatients(searchTerm: Observable<string>): Observable<Patient[]> {
-    return searchTerm.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      map(term => term.toLowerCase()),
-      map(term => {
-        const currentPatients = this.patientsSubject.value;
-        return currentPatients.filter(patient =>
-          patient.name.toLowerCase().includes(term) ||
-          patient.email.toLowerCase().includes(term)
-        );
-      })
     );
   }
 
@@ -94,6 +114,8 @@ export class PatientService {
 
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.error.message}`;
+    } else if (error.error?.message) {
+      errorMessage = error.error.message;
     } else {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
@@ -102,4 +124,3 @@ export class PatientService {
     return throwError(() => new Error(errorMessage));
   }
 }
-

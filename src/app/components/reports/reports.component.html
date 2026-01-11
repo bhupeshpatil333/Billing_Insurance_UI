@@ -1,31 +1,175 @@
-<mat-card>
-    <mat-form-field>
-        <mat-label>From</mat-label>
-        <input matInput type="date" [(ngModel)]="fromDate">
-    </mat-form-field>
+<div class="space-y-6 p-6">
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">📊 Reports & Analytics</h1>
+        <p class="text-gray-600">Generate comprehensive reports for your billing and insurance operations</p>
+    </div>
 
-    <mat-form-field>
-        <mat-label>To</mat-label>
-        <input matInput type="date" [(ngModel)]="toDate">
-    </mat-form-field>
+    <!-- Date Range Selection Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">📅 Select Date Range</h2>
+        <div class="flex items-center space-x-4">
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>From Date</mat-label>
+                <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="fromDate">
+                <mat-datepicker-toggle matIconPrefix [for]="pickerFrom"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+            </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="loadReports()">
-        Generate Report
-    </button>
-</mat-card>
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>To Date</mat-label>
+                <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate">
+                <mat-datepicker-toggle matIconPrefix [for]="pickerTo"></mat-datepicker-toggle>
+                <mat-datepicker #pickerTo></mat-datepicker>
+            </mat-form-field>
 
+            <button mat-raised-button (click)="loadReports()" [disabled]="isLoading"
+                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-6 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl">
+                <mat-icon *ngIf="!isLoading">assessment</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block mr-2"></mat-spinner>
+                {{ isLoading ? 'Loading...' : 'Generate Report' }}
+            </button>
+        </div>
+    </div>
 
-<mat-card *ngIf="paymentReport">
-    <h3>Payment Report</h3>
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
 
-    <p>Total Collected: ₹{{paymentReport.totalCollected}}</p>
-    <p>Pending Amount: ₹{{paymentReport.pendingAmount}}</p>
-</mat-card>
+    <!-- Summary Cards -->
+    <div *ngIf="!isLoading && billingReport.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Total Billing Card -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">💰 Total Billing</h3>
+                <mat-icon class="text-3xl opacity-80">receipt_long</mat-icon>
+            </div>
+            <p class="text-sm opacity-90 mb-1">Total Amount</p>
+            <p class="text-4xl font-bold">₹{{ getTotalBilled() | number:'1.2-2' }}</p>
+            <p class="text-sm opacity-75 mt-2">Billing Summary Report</p>
+        </div>
 
+        <!-- Total Insurance Card -->
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">🏥 Insurance</h3>
+                <mat-icon class="text-3xl opacity-80">health_and_safety</mat-icon>
+            </div>
+            <p class="text-sm opacity-90 mb-1">Total Covered</p>
+            <p class="text-4xl font-bold">₹{{ getTotalInsurance() | number:'1.2-2' }}</p>
+            <p class="text-sm opacity-75 mt-2">Insurance Coverage</p>
+        </div>
 
-<mat-card *ngIf="paymentReport">
-    <h3>Payment Report</h3>
+        <!-- Net Payable Card -->
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">💳 Net Payable</h3>
+                <mat-icon class="text-3xl opacity-80">payments</mat-icon>
+            </div>
+            <p class="text-sm opacity-90 mb-1">After Insurance</p>
+            <p class="text-4xl font-bold">₹{{ getTotalNet() | number:'1.2-2' }}</p>
+            <p class="text-sm opacity-75 mt-2">Patient Responsibility</p>
+        </div>
 
-    <p>Total Collected: ₹{{paymentReport.totalCollected}}</p>
-    <p>Pending Amount: ₹{{paymentReport.pendingAmount}}</p>
-</mat-card>
+        <!-- Collection Rate Card -->
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">📈 Collection</h3>
+                <mat-icon class="text-3xl opacity-80">trending_up</mat-icon>
+            </div>
+            <p class="text-sm opacity-90 mb-1">Collection Rate</p>
+            <p class="text-4xl font-bold">{{ getCollectionRate() | number:'1.0-0' }}%</p>
+            <p class="text-sm opacity-75 mt-2">Payment Efficiency</p>
+        </div>
+    </div>
+
+    <!-- Billing Report Table -->
+    <div *ngIf="!isLoading && billingReport.length > 0" class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6 bg-gray-50 border-b">
+            <h2 class="text-2xl font-bold text-gray-800">📋 Billing Report Table (MOST IMPORTANT)</h2>
+            <p class="text-gray-600 mt-1">Detailed breakdown of all billing transactions</p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table mat-table [dataSource]="billingReport" class="w-full">
+
+                <!-- Invoice Number Column -->
+                <ng-container matColumnDef="invoiceNumber">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Invoice No</th>
+                    <td mat-cell *matCellDef="let bill">{{ bill.invoiceNumber || 'INV-' + bill.billId }}</td>
+                </ng-container>
+
+                <!-- Patient Name Column -->
+                <ng-container matColumnDef="patientName">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Patient</th>
+                    <td mat-cell *matCellDef="let bill">{{ bill.patientName }}</td>
+                </ng-container>
+
+                <!-- Gross Amount Column -->
+                <ng-container matColumnDef="grossAmount">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Gross</th>
+                    <td mat-cell *matCellDef="let bill">₹{{ bill.grossAmount | number:'1.0-0' }}</td>
+                </ng-container>
+
+                <!-- Insurance Amount Column -->
+                <ng-container matColumnDef="insuranceAmount">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Insurance</th>
+                    <td mat-cell *matCellDef="let bill">₹{{ bill.insuranceAmount | number:'1.0-0' }}</td>
+                </ng-container>
+
+                <!-- Net Payable Column -->
+                <ng-container matColumnDef="netPayable">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Net</th>
+                    <td mat-cell *matCellDef="let bill" class="font-semibold text-green-600">₹{{ bill.netPayable |
+                        number:'1.0-0' }}</td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Status</th>
+                    <td mat-cell *matCellDef="let bill">
+                        <span
+                            [class]="bill.status === 'Paid' ? 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold' : 'bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold'">
+                            {{ bill.status }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Date Column -->
+                <ng-container matColumnDef="billDate">
+                    <th mat-header-cell *matHeaderCellDef class="font-bold">Date</th>
+                    <td mat-cell *matCellDef="let bill">{{ bill.billDate | date:'dd-MMM' }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+            </table>
+        </div>
+
+        <!-- Table Footer with Totals -->
+        <div class="p-6 bg-gray-50 border-t">
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <p class="text-sm text-gray-600">Total Gross</p>
+                    <p class="text-xl font-bold text-gray-800">₹{{ getTotalBilled() | number:'1.2-2' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total Insurance</p>
+                    <p class="text-xl font-bold text-purple-600">₹{{ getTotalInsurance() | number:'1.2-2' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total Net</p>
+                    <p class="text-xl font-bold text-green-600">₹{{ getTotalNet() | number:'1.2-2' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && billingReport.length === 0" class="bg-white rounded-xl shadow-lg p-12 text-center">
+        <mat-icon class="text-6xl text-gray-300 mb-4">assessment</mat-icon>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No Reports Generated</h3>
+        <p class="text-gray-500">Select a date range and click "Generate Report" to view billing data</p>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="dialog-container">
+    <h2 mat-dialog-title class="text-2xl font-bold text-purple-700 flex items-center">
+        <mat-icon class="mr-2">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+        {{ isEditMode ? 'Edit Insurance Policy' : 'Create New Insurance Policy' }}
+    </h2>
+
+    <mat-dialog-content class="py-6">
+        <form [formGroup]="policyForm" class="space-y-4">
+
+            <!-- Policy Number -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Policy Number</mat-label>
+                <input matInput formControlName="policyNumber" placeholder="e.g., POL-2026-001" required>
+                <mat-icon matPrefix>confirmation_number</mat-icon>
+                <mat-hint>Unique policy identifier</mat-hint>
+                <mat-error *ngIf="policyForm.get('policyNumber')?.hasError('required')">
+                    Policy number is required
+                </mat-error>
+                <mat-error *ngIf="policyForm.get('policyNumber')?.hasError('minlength')">
+                    Policy number must be at least 3 characters
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Coverage Percentage -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Coverage Percentage</mat-label>
+                <input matInput type="number" formControlName="coveragePercentage" placeholder="e.g., 80" min="0"
+                    max="100" required>
+                <mat-icon matPrefix>percent</mat-icon>
+                <mat-hint>Coverage percentage (0-100)</mat-hint>
+                <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('required')">
+                    Coverage percentage is required
+                </mat-error>
+                <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('min')">
+                    Coverage must be at least 0%
+                </mat-error>
+                <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('max')">
+                    Coverage cannot exceed 100%
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Valid From Date -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Valid From</mat-label>
+                <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required>
+                <mat-datepicker-toggle matIconPrefix [for]="pickerFrom"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+                <mat-hint>Policy start date</mat-hint>
+                <mat-error *ngIf="policyForm.get('validFrom')?.hasError('required')">
+                    Start date is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Valid To Date -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Valid To</mat-label>
+                <input matInput [matDatepicker]="pickerTo" formControlName="validTo" required>
+                <mat-datepicker-toggle matIconPrefix [for]="pickerTo"></mat-datepicker-toggle>
+                <mat-datepicker #pickerTo></mat-datepicker>
+                <mat-hint>Policy end date</mat-hint>
+                <mat-error *ngIf="policyForm.get('validTo')?.hasError('required')">
+                    End date is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Info Box -->
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded mt-4">
+                <div class="flex items-start">
+                    <mat-icon class="text-purple-600 mr-2">info</mat-icon>
+                    <div class="text-sm text-purple-800">
+                        <p class="font-semibold">{{ isEditMode ? 'Policy Update' : 'Policy Creation' }}</p>
+                        <p class="mt-1">{{ isEditMode ? 'Changes will be reflected immediately for all assigned
+                            patients.' : 'This policy will be available for assignment to patients immediately after
+                            creation.' }}</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="flex justify-end space-x-3 pb-4 px-6">
+        <button mat-button (click)="onCancel()" class="text-gray-600">
+            <mat-icon>close</mat-icon>
+            Cancel
+        </button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!policyForm.valid"
+            class="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+            <mat-icon>{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+            {{ isEditMode ? 'Update Policy' : 'Create Policy' }}
+        </button>
+    </mat-dialog-actions>
+</div>

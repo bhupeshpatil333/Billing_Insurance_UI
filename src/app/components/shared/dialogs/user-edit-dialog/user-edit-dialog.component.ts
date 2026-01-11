@@ -13,7 +13,7 @@ import { MaterialModule } from '../../material.module';
 })
 export class UserEditDialogComponent implements OnInit {
   userForm!: FormGroup;
-  roles = ['Admin', 'BillingStaff', 'InsuranceStaff'];
+  roles = ['Admin', 'Billing', 'Insurance'];
 
   constructor(
     private fb: FormBuilder,
@@ -23,15 +23,14 @@ export class UserEditDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.userForm = this.fb.group({
-      name: [this.data?.name || '', Validators.required],
-      email: [this.data?.email || '', [Validators.required, Validators.email]],
+      email: [{ value: this.data?.email || '', disabled: true }],
       role: [this.data?.role || '', Validators.required]
     });
   }
 
   onSave(): void {
     if (this.userForm.valid) {
-      this.dialogRef.close(this.userForm.value);
+      this.dialogRef.close(this.userForm.getRawValue());
     }
   }
 

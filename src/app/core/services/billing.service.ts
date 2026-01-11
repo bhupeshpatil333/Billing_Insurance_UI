@@ -1,15 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map, retry } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface Bill {
-  id?: string;
-  patientId: string;
-  amount: number;
-  date: Date;
-  status: string;
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface BillResponse {
+  billId: number;
+  patientId: number;
+  grossAmount: number;
+  insuranceAmount: number;
+  netPayable: number;
+  invoiceNumber: string;
+  status?: string;
+  createdAt: string;
+}
+
+export interface GenerateBillRequest {
+  patientId: number;
+  services: Array<{
+    serviceId: number;
+    quantity: number;
+  }>;
 }
 
 @Injectable({
@@ -21,27 +38,63 @@ export class BillingService {
 
   constructor(private http: HttpClient) { }
 
-  generateBill(data: any): Observable<Bill> {
-    return this.http.post<Bill>(this.api, data).pipe(
+  generateBill(data: GenerateBillRequest): Observable<BillResponse> {
+    return this.http.post<ApiResponse<BillResponse>>(`${this.api}`, data).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(bill => console.log('Bill generated:', bill)),
       catchError(this.handleError)
     );
   }
 
-  getBillById(id: string): Observable<Bill> {
-    return this.http.get<Bill>(`${this.api}/${id}`).pipe(
-      retry(2), // Retry failed requests up to 2 times
+  getBillById(id: number): Observable<BillResponse> {
+    return this.http.get<ApiResponse<BillResponse>>(`${this.api}/${id}`).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(bill => console.log('Bill retrieved:', bill)),
       catchError(this.handleError)
     );
   }
 
-  getAllBills(): Observable<Bill[]> {
-    return this.http.get<Bill[]>(this.api).pipe(
-      map(bills => bills.sort((a, b) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      )),
+  getAllBills(): Observable<BillResponse[]> {
+    return this.http.get<ApiResponse<BillResponse[]>>(this.api).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
       tap(bills => console.log(`Retrieved ${bills.length} bills`)),
+      catchError(this.handleError)
+    );
+  }
+
+  downloadInvoice(billId: number): Observable<Blob> {
+    return this.http.get(`${this.api}/${billId}/invoice`, {
+      responseType: 'blob'
+    }).pipe(
+      tap(() => console.log('Invoice downloaded')),
+      catchError(this.handleError)
+    );
+  }
+
+  emailInvoice(billId: number, email: string): Observable<void> {
+    return this.http.post<ApiResponse<void>>(`${this.api}/${billId}/email`, { email }).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response.data;
+      }),
+      tap(() => console.log('Invoice emailed')),
       catchError(this.handleError)
     );
   }
@@ -51,6 +104,8 @@ export class BillingService {
 
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.error.message}`;
+    } else if (error.error?.message) {
+      errorMessage = error.error.message;
     } else {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
@@ -58,13 +113,4 @@ export class BillingService {
     console.error('Billing Service Error:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
-
-  downloadInvoice(billId: string) {
-    return this.http.get(
-      `${this.api}/${billId}/invoice`,
-      { responseType: 'blob' }
-    );
-  }
-
 }
-

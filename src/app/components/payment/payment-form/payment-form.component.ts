@@ -34,11 +34,13 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Load only unpaid bills
     this.billingService.getAllBills()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (bills) => {
-          this.bills = bills;
+          // Filter only pending/unpaid bills
+          this.bills = bills.filter(b => b.status !== 'Paid');
         },
         error: (error) => {
           console.error('Error fetching bills:', error);
@@ -49,20 +51,25 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   makePayment(): void {
     if (this.paymentForm.valid) {
       const paymentData = {
-        ...this.paymentForm.value,
-        transactionDate: new Date(),
-        status: 'completed'
+        billId: this.paymentForm.value.billId,
+        paidAmount: this.paymentForm.value.amount,
+        paymentMode: this.paymentForm.value.paymentMethod as 'Cash' | 'UPI' | 'Card'
       };
 
-      this.paymentService.makePayment(paymentData)
+      this.paymentService.recordPayment(paymentData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (payment) => {
-            console.log('Payment processed successfully:', payment);
+          next: (response) => {
+            console.log('Payment processed successfully:', response);
+            alert(`Payment successful! Status: ${response.status}`);
             this.paymentForm.reset();
+
+            // Reload bills to remove paid bill from dropdown
+            this.ngOnInit();
           },
           error: (error) => {
             console.error('Error processing payment:', error);
+            alert('Error processing payment: ' + error.message);
           }
         });
     }

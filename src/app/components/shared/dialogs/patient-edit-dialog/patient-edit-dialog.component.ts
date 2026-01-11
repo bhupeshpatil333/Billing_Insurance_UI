@@ -13,19 +13,21 @@ import { MaterialModule } from '../../material.module';
 })
 export class PatientEditDialogComponent implements OnInit {
   patientForm!: FormGroup;
+  isEditMode: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<PatientEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+    this.isEditMode = !!data; // If data exists, we're editing
+  }
 
   ngOnInit(): void {
     this.patientForm = this.fb.group({
       fullName: [this.data?.fullName || '', Validators.required],
-      email: [this.data?.email || '', [Validators.required, Validators.email]],
       mobile: [this.data?.mobile || '', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      dateOfBirth: [this.data?.dateOfBirth || '']
+      dob: [this.data?.dob || '', Validators.required]
     });
   }
 

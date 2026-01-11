@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         map(result => ({
           patients: result.patients.length,
           bills: result.bills.length,
-          revenue: result.bills.reduce((sum, bill) => sum + (bill.amount || 0), 0)
+          revenue: result.bills.reduce((sum, bill) => sum + (bill.netPayable || bill.grossAmount || 0), 0)
         })),
         takeUntil(this.destroy$)
       )

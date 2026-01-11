@@ -17,7 +17,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 export class BillFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  patientId: string = '';
+  patientId!: number;
   selectedServices: any[] = [];
   patients: any[] = [];
   services: any[] = [
@@ -76,7 +76,7 @@ export class BillFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (bill) => {
           console.log('Bill generated successfully:', bill);
-          this.patientId = '';
+          this.patientId = 0;
           this.selectedServices = [];
         },
         error: (error) => {

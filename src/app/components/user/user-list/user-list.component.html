@@ -3,24 +3,29 @@
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-3xl font-bold text-gray-800 mb-2">User Management</h1>
-            <p class="text-gray-600">Manage system users and their roles</p>
+            <p class="text-gray-600">Manage system users and their roles (Admin Only)</p>
         </div>
-        <button
+        <button (click)="createUser()"
             class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
             <span class="mr-2">➕</span>
             Add User
         </button>
     </div>
 
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
     <!-- Users Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div *ngIf="!isLoading" class="bg-white rounded-xl shadow-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
                     <tr>
-                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Name</th>
                         <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Email</th>
                         <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -31,37 +36,42 @@
                             <div class="flex items-center">
                                 <div
                                     class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
-                                    {{ user.name.charAt(0) || 'U' }}
+                                    {{ user.email.charAt(0).toUpperCase() }}
                                 </div>
-                                <span class="font-medium text-gray-800">{{ user.name }}</span>
+                                <span class="font-medium text-gray-800">{{ user.email }}</span>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 text-gray-600">
-                            <span class="flex items-center">
-                                <span class="mr-2">📧</span>
-                                {{ user.email }}
-                            </span>
                         </td>
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
                                 [class.bg-purple-100]="user.role === 'Admin'"
                                 [class.text-purple-800]="user.role === 'Admin'"
-                                [class.bg-blue-100]="user.role === 'BillingStaff'"
-                                [class.text-blue-800]="user.role === 'BillingStaff'"
-                                [class.bg-green-100]="user.role === 'InsuranceStaff'"
-                                [class.text-green-800]="user.role === 'InsuranceStaff'">
+                                [class.bg-blue-100]="user.role === 'Billing'"
+                                [class.text-blue-800]="user.role === 'Billing'"
+                                [class.bg-green-100]="user.role === 'Insurance'"
+                                [class.text-green-800]="user.role === 'Insurance'">
                                 {{ user.role }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+                                [class.bg-green-100]="user.isActive" [class.text-green-800]="user.isActive"
+                                [class.bg-red-100]="!user.isActive" [class.text-red-800]="!user.isActive">
+                                <span class="mr-1">{{ user.isActive ? '✓' : '✗' }}</span>
+                                {{ user.isActive ? 'Active' : 'Inactive' }}
                             </span>
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex space-x-2">
                                 <button (click)="editUser(user)"
                                     class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors font-medium">
-                                    Edit
+                                    Edit Role
                                 </button>
-                                <button (click)="deleteUser(user)"
-                                    class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors font-medium">
-                                    Delete
+                                <button (click)="toggleUserStatus(user)" [class.bg-green-100]="!user.isActive"
+                                    [class.text-green-600]="!user.isActive" [class.hover:bg-green-200]="!user.isActive"
+                                    [class.bg-red-100]="user.isActive" [class.text-red-600]="user.isActive"
+                                    [class.hover:bg-red-200]="user.isActive"
+                                    class="px-4 py-2 rounded-lg transition-colors font-medium">
+                                    {{ user.isActive ? 'Deactivate' : 'Activate' }}
                                 </button>
                             </div>
                         </td>
@@ -88,8 +98,8 @@
                 <h3 class="text-lg font-semibold text-purple-900 mb-2">User Roles</h3>
                 <ul class="text-purple-800 text-sm space-y-1">
                     <li><strong>Admin:</strong> Full system access and user management</li>
-                    <li><strong>BillingStaff:</strong> Access to billing and payment features</li>
-                    <li><strong>InsuranceStaff:</strong> Access to insurance policy management</li>
+                    <li><strong>Billing:</strong> Access to billing and payment features</li>
+                    <li><strong>Insurance:</strong> Access to insurance policy management</li>
                 </ul>
             </div>
         </div>

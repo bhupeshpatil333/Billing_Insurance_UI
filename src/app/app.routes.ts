@@ -43,7 +43,15 @@ export const routes: Routes = [
         path: 'insurance',
         component: InsuranceFormComponent,
         canActivate: [roleGuard],
-        data: { roles: ['Admin', 'InsuranceStaff'] }
+        data: { roles: ['Admin', 'Insurance'] }
+      },
+
+      // Policy Management - Admin and Insurance
+      {
+        path: 'policies',
+        loadComponent: () => import('./components/insurance/policy-list/policy-list.component').then(m => m.PolicyListComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['Admin', 'Insurance'] }
       },
 
       // Billing staff and admin
@@ -51,7 +59,7 @@ export const routes: Routes = [
         path: 'billing',
         component: BillListComponent,
         canActivate: [roleGuard],
-        data: { roles: ['Admin', 'BillingStaff'] }
+        data: { roles: ['Admin', 'Billing'] }
       },
 
       { path: 'billing/:id', component: BillListComponent },
@@ -68,7 +76,7 @@ export const routes: Routes = [
         path: 'reports',
         component: ReportsComponent,
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Admin', 'Accountant'] }
+        data: { roles: ['Admin'] }
       }
 
     ]

@@ -30,13 +30,8 @@ export class BillListComponent implements OnInit, OnDestroy {
   // Data
   patients: any[] = [];
   services: Service[] = [
-    { serviceName: 'Consultation', cost: 500, quantity: 0 },
-    { serviceName: 'X-Ray', cost: 1000, quantity: 0 },
-    { serviceName: 'Blood Test', cost: 800, quantity: 0 },
-    { serviceName: 'ECG', cost: 600, quantity: 0 },
-    { serviceName: 'MRI Scan', cost: 5000, quantity: 0 },
-    { serviceName: 'CT Scan', cost: 4000, quantity: 0 },
-    { serviceName: 'Ultrasound', cost: 1200, quantity: 0 }
+    { serviceId: '1', serviceName: 'Consultation', cost: 500, quantity: 0 },
+    { serviceId: '2', serviceName: 'X-Ray', cost: 1000, quantity: 0 },
   ];
 
   // Form data
@@ -129,13 +124,9 @@ export class BillListComponent implements OnInit, OnDestroy {
     const selectedServices = this.services.filter(s => s.quantity > 0);
 
     const payload = {
-      patientId: this.patientId,
-      grossAmount: this.grossAmount,
-      insuranceAmount: this.insuranceAmount,
-      netPayable: this.netPayable,
+      patientId: parseInt(this.patientId, 10), // Ensure number
       services: selectedServices.map(s => ({
-        serviceName: s.serviceName,
-        cost: s.cost,
+        serviceId: parseInt(s.serviceId || '0', 10),
         quantity: s.quantity
       }))
     };
@@ -145,6 +136,9 @@ export class BillListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.billResult = res;
+          this.netPayable = res.netPayable; // Update net payable from backend response
+          this.insuranceAmount = res.insuranceAmount;
+          this.grossAmount = res.grossAmount;
           alert('Bill generated successfully!');
         },
         error: (error) => {
@@ -174,13 +168,12 @@ export class BillListComponent implements OnInit, OnDestroy {
     }
 
     const payload = {
-      billId: this.billResult.id || this.billResult.billId,
-      amount: this.netPayable,
-      paymentMethod: 'UPI',
-      date: new Date()
+      billId: this.billResult.billId,
+      paidAmount: this.netPayable,
+      paymentMode: 'UPI' as const
     };
 
-    this.paymentService.makePayment(payload)
+    this.paymentService.recordPayment(payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {

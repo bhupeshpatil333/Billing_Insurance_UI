@@ -22,7 +22,7 @@ import { PatientEditDialogComponent } from '../../shared/dialogs/patient-edit-di
 export class PatientListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  displayedColumns: string[] = ['fullName', 'email', 'mobile', 'actions'];
+  displayedColumns: string[] = ['fullName', 'dob', 'mobile', 'actions'];
   dataSource: MatTableDataSource<any>;
   filterValue: string = '';
 
@@ -45,7 +45,9 @@ export class PatientListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.dataSource.data = res;
+          // Sort by patientId descending (latest first)
+          const sortedPatients = res.sort((a, b) => (b.patientId || 0) - (a.patientId || 0));
+          this.dataSource.data = sortedPatients;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         },
@@ -70,6 +72,32 @@ export class PatientListComponent implements OnInit, OnDestroy {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  addPatient(): void {
+    const dialogRef = this.dialog.open(PatientEditDialogComponent, {
+      width: '600px',
+      data: null // Pass null for new patient
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Call service to add new patient
+        this.patientService.addPatient(result)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (patientId) => {
+              // Refresh the list
+              this.loadPatients();
+              alert(`Patient added successfully with ID: ${patientId}`);
+            },
+            error: (error) => {
+              console.error('Error adding patient:', error);
+              alert('Error adding patient. Please try again.');
+            }
+          });
+      }
+    });
   }
 
   editPatient(patient: any): void {

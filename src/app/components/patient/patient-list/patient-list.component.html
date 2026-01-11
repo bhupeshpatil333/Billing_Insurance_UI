@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Patient Management</h1>
             <p class="text-gray-600">View and manage all registered patients</p>
         </div>
-        <button
+        <button (click)="addPatient()"
             class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
             <span class="mr-2">➕</span>
             Add Patient
@@ -53,16 +53,16 @@
                     </td>
                 </ng-container>
 
-                <!-- Email Column -->
-                <ng-container matColumnDef="email">
+                <!-- DOB Column -->
+                <ng-container matColumnDef="dob">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
                         class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
-                        Email
+                        Date of Birth
                     </th>
                     <td mat-cell *matCellDef="let patient" class="px-6 py-4 text-gray-600">
                         <span class="flex items-center">
-                            <mat-icon class="text-gray-400 mr-2 text-sm">email</mat-icon>
-                            {{ patient.email }}
+                            <mat-icon class="text-gray-400 mr-2 text-sm">calendar_today</mat-icon>
+                            {{ patient.dob | date }}
                         </span>
                     </td>
                 </ng-container>
