@@ -5,8 +5,8 @@
             <mat-icon class="text-4xl mr-3">{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
             {{ isEditMode ? 'Edit Patient Information' : 'Add New Patient' }}
         </h2>
-        <p class="text-indigo-100 text-sm mt-2">{{ isEditMode ? 'Update patient details below' : 'Fill in the patient
-            information' }}</p>
+        <!-- <p class="text-indigo-100 text-sm mt-2">{{ isEditMode ? 'Update patient details below' : 'Fill in the patient
+            information' }}</p> -->
     </div>
 
     <mat-dialog-content class="py-6">
@@ -14,22 +14,22 @@
 
             <!-- Full Name -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">person</mat-icon>
                         Full Name
                     </mat-label>
                     <input matInput formControlName="fullName" placeholder="Enter patient's full name" class="text-lg">
                     <mat-error *ngIf="patientForm.get('fullName')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Full name is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Full name of the patient is required
                     </mat-error>
                 </mat-form-field>
             </div>
 
             <!-- Mobile -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">phone</mat-icon>
                         Mobile Number
@@ -38,32 +38,32 @@
                         maxlength="10">
                     <mat-hint>Format: 10 digits</mat-hint>
                     <mat-error *ngIf="patientForm.get('mobile')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Mobile number is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Contact mobile number is required
                     </mat-error>
                     <mat-error *ngIf="patientForm.get('mobile')?.hasError('pattern')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Please enter a valid 10-digit number
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please enter a valid 10-digit mobile number
                     </mat-error>
                 </mat-form-field>
             </div>
 
             <!-- Date of Birth -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">cake</mat-icon>
                         Date of Birth
                     </mat-label>
                     <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Select date of birth"
-                        class="text-lg">
+                        class="text-lg" [max]="today" (click)="picker.open()" readonly>
                     <mat-datepicker-toggle matIconSuffix [for]="picker">
                         <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
                     </mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                     <mat-error *ngIf="patientForm.get('dob')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Date of birth is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Patient's date of birth is required
                     </mat-error>
                 </mat-form-field>
             </div>

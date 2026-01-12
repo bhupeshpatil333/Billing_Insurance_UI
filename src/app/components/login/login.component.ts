@@ -15,6 +15,7 @@ import { MaterialModule } from '../shared/material.module';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  hidePassword: boolean = true;
 
   constructor(
     private fb: FormBuilder,

@@ -15,7 +15,7 @@
     <!-- Filter Section -->
     <div class="bg-white rounded-xl shadow-lg p-6">
         <div class="flex items-center space-x-4">
-            <mat-form-field appearance="outline" class="flex-1">
+            <mat-form-field class="flex-1">
                 <mat-label>Search Patients</mat-label>
                 <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter($event)"
                     placeholder="Search by name, email, or mobile" class="text-gray-700">
@@ -89,9 +89,9 @@
                     </th>
                     <td mat-cell *matCellDef="let patient" class="px-6 py-4">
                         <div class="flex space-x-2">
-                            <button mat-icon-button color="primary" matTooltip="View Details">
+                            <!-- <button mat-icon-button color="primary" matTooltip="View Details">
                                 <mat-icon>visibility</mat-icon>
-                            </button>
+                            </button> -->
                             <button mat-icon-button color="accent" matTooltip="Edit Patient"
                                 (click)="editPatient(patient)">
                                 <mat-icon>edit</mat-icon>

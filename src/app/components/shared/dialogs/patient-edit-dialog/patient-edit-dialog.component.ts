@@ -14,6 +14,7 @@ import { MaterialModule } from '../../material.module';
 export class PatientEditDialogComponent implements OnInit {
   patientForm!: FormGroup;
   isEditMode: boolean = false;
+  today: Date = new Date();
 
   constructor(
     private fb: FormBuilder,

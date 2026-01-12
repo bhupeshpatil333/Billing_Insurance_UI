@@ -21,13 +21,13 @@ export class BillFormComponent implements OnInit, OnDestroy {
   selectedServices: any[] = [];
   patients: any[] = [];
   services: any[] = [
-    { serviceName: 'Consultation', cost: 500, selected: false },
-    { serviceName: 'X-Ray', cost: 1000, selected: false },
-    { serviceName: 'Blood Test', cost: 800, selected: false },
-    { serviceName: 'ECG', cost: 600, selected: false },
-    { serviceName: 'MRI Scan', cost: 5000, selected: false },
-    { serviceName: 'CT Scan', cost: 4000, selected: false },
-    { serviceName: 'Ultrasound', cost: 1200, selected: false }
+    { serviceId: 1, serviceName: 'Consultation', cost: 500, selected: false },
+    { serviceId: 2, serviceName: 'X-Ray', cost: 1000, selected: false },
+    { serviceId: 3, serviceName: 'Blood Test', cost: 800, selected: false },
+    { serviceId: 4, serviceName: 'ECG', cost: 600, selected: false },
+    { serviceId: 5, serviceName: 'MRI Scan', cost: 5000, selected: false },
+    { serviceId: 6, serviceName: 'CT Scan', cost: 4000, selected: false },
+    { serviceId: 7, serviceName: 'Ultrasound', cost: 1200, selected: false }
   ];
 
   constructor(
@@ -61,14 +61,12 @@ export class BillFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const totalAmount = this.selectedServices.reduce((sum, service) => sum + service.cost, 0);
-
     const billData = {
-      patientId: this.patientId,
-      amount: totalAmount,
-      date: new Date(),
-      status: 'pending',
-      services: this.selectedServices
+      patientId: Number(this.patientId),
+      services: selectedServices.map(s => ({
+        serviceId: s.serviceId,
+        quantity: 1
+      }))
     };
 
     this.billingService.generateBill(billData)
@@ -77,7 +75,7 @@ export class BillFormComponent implements OnInit, OnDestroy {
         next: (bill) => {
           console.log('Bill generated successfully:', bill);
           this.patientId = 0;
-          this.selectedServices = [];
+          this.services.forEach(s => s.selected = false);
         },
         error: (error) => {
           console.error('Error generating bill:', error);

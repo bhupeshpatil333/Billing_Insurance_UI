@@ -19,6 +19,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   fromDate: string = '';
   toDate: string = '';
+  maxDate: Date = new Date();
 
   billingReport: any[] = [];
   paymentReport: any = null;

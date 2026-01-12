@@ -29,7 +29,7 @@
             <form [formGroup]="assignPolicyForm" class="space-y-6">
 
                 <!-- Patient Selection -->
-                <mat-form-field appearance="outline" class="w-full">
+                <mat-form-field class="w-full">
                     <mat-label>Select Patient</mat-label>
                     <mat-select formControlName="patientId" required>
                         <mat-option *ngFor="let patient of patients" [value]="patient.patientId">
@@ -42,12 +42,13 @@
                     <mat-icon matPrefix>person</mat-icon>
                     <mat-hint>Choose the patient to assign the policy to</mat-hint>
                     <mat-error *ngIf="assignPolicyForm.get('patientId')?.hasError('required')">
-                        Patient is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please select a patient for assignment
                     </mat-error>
                 </mat-form-field>
 
                 <!-- Policy Selection -->
-                <mat-form-field appearance="outline" class="w-full">
+                <mat-form-field class="w-full">
                     <mat-label>Select Insurance Policy</mat-label>
                     <mat-select formControlName="policyId" required>
                         <mat-option *ngFor="let policy of policies" [value]="policy.policyId">
@@ -63,7 +64,8 @@
                     <mat-icon matPrefix>health_and_safety</mat-icon>
                     <mat-hint>Choose the insurance policy to assign</mat-hint>
                     <mat-error *ngIf="assignPolicyForm.get('policyId')?.hasError('required')">
-                        Policy is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please select an insurance policy to assign
                     </mat-error>
                 </mat-form-field>
 

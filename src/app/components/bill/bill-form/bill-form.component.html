@@ -10,19 +10,19 @@
         <form (ngSubmit)="generateBill()" class="space-y-6">
 
             <!-- Patient Selection -->
-            <div>
-                <label for="patient" class="block text-sm font-semibold text-gray-700 mb-2">
-                    <span class="mr-2">👤</span>
-                    Select Patient
-                </label>
-                <select id="patient" [(ngModel)]="patientId" name="patient"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-                    <option value="">Choose a patient...</option>
-                    <option *ngFor="let p of patients" [value]="p.patientId">
+            <mat-form-field class="w-full">
+                <mat-label>Select Patient</mat-label>
+                <mat-select [(ngModel)]="patientId" name="patient" required>
+                    <mat-option *ngFor="let p of patients" [value]="p.patientId">
                         {{ p.fullName }}
-                    </option>
-                </select>
-            </div>
+                    </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="!patientId">
+                    <mat-icon class="text-xs align-middle">error</mat-icon>
+                    Patient selection is required to generate a bill
+                </mat-error>
+            </mat-form-field>
 
             <!-- Services Selection -->
             <div>
@@ -30,7 +30,8 @@
                     <span class="mr-2">🏥</span>
                     Select Services
                 </label>
-                <div class="space-y-2 max-h-96 overflow-y-auto border-2 border-gray-200 rounded-lg p-4">
+                <div class="space-y-2 max-h-96 overflow-y-auto border-2 border-gray-200 rounded-lg p-4"
+                    [class.border-red-500]="calculateTotal() === 0 && patientId">
                     <div *ngFor="let service of services"
                         class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer">
                         <label class="flex items-center flex-1 cursor-pointer">
@@ -43,6 +44,11 @@
                             <span class="text-lg font-bold text-indigo-600">₹{{ service.cost }}</span>
                         </label>
                     </div>
+                </div>
+                <!-- Service Validation Error -->
+                <div *ngIf="calculateTotal() === 0 && patientId" class="mt-2 text-red-500 text-xs flex items-center">
+                    <mat-icon class="text-xs mr-1">error</mat-icon>
+                    Please select at least one service to generate a bill
                 </div>
             </div>
 

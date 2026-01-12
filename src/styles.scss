@@ -53,11 +53,17 @@ body {
 /* Fix Material Dialog */
 .mat-mdc-dialog-container {
     background: white !important;
-    overflow-x: hidden !important;
+    overflow: hidden !important;
+    border-radius: 24px !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 24px !important;
+    overflow: hidden !important;
 }
 
 .mat-mdc-dialog-content {
-    overflow-x: hidden !important;
+    overflow: hidden !important;
     max-width: 100%;
 }
 

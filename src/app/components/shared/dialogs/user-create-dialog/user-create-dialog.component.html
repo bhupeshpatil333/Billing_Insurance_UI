@@ -5,7 +5,7 @@
             <mat-icon class="text-4xl mr-3">person_add</mat-icon>
             Create New User Account
         </h2>
-        <p class="text-blue-100 text-sm mt-2">Set up a new user with email and role assignment</p>
+        <!-- <p class="text-blue-100 text-sm mt-2">Set up a new user with email and role assignment</p> -->
     </div>
 
     <mat-dialog-content class="py-6">
@@ -13,7 +13,7 @@
 
             <!-- Email -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">email</mat-icon>
                         Email Address
@@ -21,19 +21,19 @@
                     <input matInput formControlName="email" type="email" placeholder="user@example.com" class="text-lg">
                     <mat-hint>This will be used for login</mat-hint>
                     <mat-error *ngIf="userForm.get('email')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Email is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        User email address is required
                     </mat-error>
                     <mat-error *ngIf="userForm.get('email')?.hasError('email')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Please enter a valid email address
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please enter a valid work email (e.g., user&#64;medicare.com)
                     </mat-error>
                 </mat-form-field>
             </div>
 
             <!-- Password -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">lock</mat-icon>
                         Password
@@ -42,19 +42,19 @@
                         class="text-lg">
                     <mat-hint>Minimum 6 characters required</mat-hint>
                     <mat-error *ngIf="userForm.get('password')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Password is required
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        A secure password is required for this account
                     </mat-error>
                     <mat-error *ngIf="userForm.get('password')?.hasError('minlength')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Password must be at least 6 characters
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Password must be 6 characters or longer
                     </mat-error>
                 </mat-form-field>
             </div>
 
             <!-- Role -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">badge</mat-icon>
                         User Role
@@ -71,8 +71,8 @@
                         </mat-option>
                     </mat-select>
                     <mat-error *ngIf="userForm.get('role')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Please select a role
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please assign a role to this user
                     </mat-error>
                 </mat-form-field>
             </div>

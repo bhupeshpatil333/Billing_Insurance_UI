@@ -18,52 +18,39 @@
 
                 <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6">
                     <!-- Email Field -->
-                    <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Email Address
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-400 text-xl">📧</span>
-                            </div>
-                            <input type="email" id="email" formControlName="email" placeholder="Enter your email"
-                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none"
-                                [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
-                        </div>
-                        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="mt-1">
-                            <p *ngIf="loginForm.get('email')?.errors?.['required']" class="text-red-500 text-xs">
-                                Email is required
-                            </p>
-                            <p *ngIf="loginForm.get('email')?.errors?.['email']" class="text-red-500 text-xs">
-                                Please enter a valid email
-                            </p>
-                        </div>
-                    </div>
+                    <mat-form-field class="w-full">
+                        <mat-label>Email Address</mat-label>
+                        <input matInput type="email" formControlName="email" placeholder="Enter your email" required>
+                        <mat-icon matPrefix class="mr-2 text-indigo-500">email</mat-icon>
+                        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                            <mat-icon class="text-xs align-middle">error</mat-icon>
+                            Email address is required to sign in
+                        </mat-error>
+                        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                            <mat-icon class="text-xs align-middle">error</mat-icon>
+                            Please enter a valid work email address
+                        </mat-error>
+                    </mat-form-field>
 
                     <!-- Password Field -->
-                    <div>
-                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Password
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-400 text-xl">🔒</span>
-                            </div>
-                            <input type="password" id="password" formControlName="password"
-                                placeholder="Enter your password"
-                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none"
-                                [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
-                        </div>
-                        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-                            class="mt-1">
-                            <p *ngIf="loginForm.get('password')?.errors?.['required']" class="text-red-500 text-xs">
-                                Password is required
-                            </p>
-                            <p *ngIf="loginForm.get('password')?.errors?.['minlength']" class="text-red-500 text-xs">
-                                Password must be at least 6 characters
-                            </p>
-                        </div>
-                    </div>
+                    <mat-form-field class="w-full">
+                        <mat-label>Password</mat-label>
+                        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                            placeholder="Enter your password" required>
+                        <mat-icon matPrefix class="mr-2 text-indigo-500">lock</mat-icon>
+                        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
+                            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                            <mat-icon class="text-xs align-middle">error</mat-icon>
+                            Account password is required
+                        </mat-error>
+                        <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+                            <mat-icon class="text-xs align-middle">error</mat-icon>
+                            Password must be at least 6 characters long
+                        </mat-error>
+                    </mat-form-field>
 
                     <!-- Error Message -->
                     <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 rounded">

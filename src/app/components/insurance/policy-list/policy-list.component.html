@@ -16,7 +16,7 @@
     <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Search -->
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field class="w-full">
                 <mat-label>Search Policies</mat-label>
                 <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
                     placeholder="Search by policy number...">
@@ -24,7 +24,7 @@
             </mat-form-field>
 
             <!-- Filter -->
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field class="w-full">
                 <mat-label>Filter by Status</mat-label>
                 <mat-select [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()">
                     <mat-option value="all">All Policies</mat-option>

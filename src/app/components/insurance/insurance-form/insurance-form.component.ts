@@ -6,7 +6,7 @@ import { InsuranceService, Policy } from '../../../core/services/insurance.servi
 import { PatientService, Patient } from '../../../core/services/patient.service';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../../../core/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PolicyCreateDialogComponent } from '../../shared/dialogs/policy-create-dialog/policy-create-dialog.component';
 
@@ -29,7 +29,7 @@ export class InsuranceFormComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private insuranceService: InsuranceService,
     private patientService: PatientService,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
     private dialog: MatDialog
   ) {
     this.assignPolicyForm = this.fb.group({
@@ -62,12 +62,12 @@ export class InsuranceFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (policy) => {
           console.log('Policy created successfully:', policy);
-          this.snackBar.open('Insurance policy created successfully!', 'Close', { duration: 3000 });
+          this.notificationService.success('Insurance policy created successfully!', 'Policy Created');
           this.loadData(); // Refresh the policies list
         },
         error: (error) => {
           console.error('Error creating policy:', error);
-          this.snackBar.open('Error creating policy: ' + error.message, 'Close', { duration: 5000 });
+          this.notificationService.error('Error creating policy: ' + error.message);
           this.isLoading = false;
         }
       });
@@ -92,7 +92,7 @@ export class InsuranceFormComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading data:', error);
-          this.snackBar.open('Error loading data: ' + error.message, 'Close', { duration: 5000 });
+          this.notificationService.error('Error loading data: ' + error.message);
           this.isLoading = false;
         }
       });
@@ -114,18 +114,18 @@ export class InsuranceFormComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (result) => {
             console.log('Policy assigned successfully:', result);
-            this.snackBar.open('Policy assigned successfully!', 'Close', { duration: 3000 });
+            this.notificationService.success('Policy assigned successfully!', 'Assignment Success');
             this.assignPolicyForm.reset();
             this.isLoading = false;
           },
           error: (error) => {
             console.error('Error assigning policy:', error);
-            this.snackBar.open('Error assigning policy: ' + error.message, 'Close', { duration: 5000 });
+            this.notificationService.error('Error assigning policy: ' + error.message);
             this.isLoading = false;
           }
         });
     } else {
-      this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 });
+      this.notificationService.warning('Please fill all required fields');
     }
   }
 

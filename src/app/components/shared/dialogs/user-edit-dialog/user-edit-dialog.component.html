@@ -5,7 +5,7 @@
             <mat-icon class="text-4xl mr-3">edit</mat-icon>
             Edit User Role
         </h2>
-        <p class="text-amber-100 text-sm mt-2">Update user role assignment and permissions</p>
+        <!-- <p class="text-amber-100 text-sm mt-2">Update user role assignment and permissions</p> -->
     </div>
 
     <mat-dialog-content class="py-6">
@@ -13,7 +13,7 @@
 
             <!-- Email (Read-only) -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field readonly-field">
+                <mat-form-field class="w-full modern-field readonly-field">
                     <mat-label>
                         <mat-icon class="field-icon">email</mat-icon>
                         Email Address
@@ -25,7 +25,7 @@
 
             <!-- Role -->
             <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full modern-field">
+                <mat-form-field class="w-full modern-field">
                     <mat-label>
                         <mat-icon class="field-icon">badge</mat-icon>
                         User Role
@@ -42,8 +42,8 @@
                         </mat-option>
                     </mat-select>
                     <mat-error *ngIf="userForm.get('role')?.hasError('required')">
-                        <mat-icon class="error-icon">error</mat-icon>
-                        Please select a role
+                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                        Please select a new role for the user
                     </mat-error>
                 </mat-form-field>
             </div>

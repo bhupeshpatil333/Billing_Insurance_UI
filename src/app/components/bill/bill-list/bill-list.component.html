@@ -12,13 +12,14 @@
             Patient Details
         </h3>
 
-        <mat-form-field appearance="outline" class="w-full">
+        <mat-form-field class="w-full">
             <mat-label>Select Patient</mat-label>
-            <mat-select [(ngModel)]="patientId" (selectionChange)="onPatientChange()">
+            <mat-select [(ngModel)]="patientId" (selectionChange)="onPatientChange()" required name="patientSelect">
                 <mat-option *ngFor="let p of patients" [value]="p.patientId">
                     {{ p.fullName }}
                 </mat-option>
             </mat-select>
+            <mat-error>Please select a patient to generate a bill</mat-error>
         </mat-form-field>
 
         <div *ngIf="insuranceCoverage > 0" class="mt-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
