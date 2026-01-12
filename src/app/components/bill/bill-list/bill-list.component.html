@@ -135,9 +135,17 @@
             </button>
         </div>
 
-        <button mat-raised-button color="primary" *ngIf="billResult" (click)="downloadInvoice()">
-            Download Invoice PDF
-        </button>
+        <div class="flex gap-4 mt-4">
+            <button mat-raised-button color="primary" *ngIf="billResult" (click)="downloadInvoice()" class="flex-1">
+                <mat-icon class="mr-2">download</mat-icon>
+                Download PDF
+            </button>
+            <!-- <button mat-raised-button color="accent" *ngIf="billResult" (click)="emailInvoice()"
+                class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white border-none shadow-md">
+                <mat-icon class="mr-2">email</mat-icon>
+                Email Invoice
+            </button> -->
+        </div>
 
     </div>
 

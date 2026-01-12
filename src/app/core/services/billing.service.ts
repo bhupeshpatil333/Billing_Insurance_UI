@@ -86,8 +86,8 @@ export class BillingService {
     );
   }
 
-  emailInvoice(billId: number, email: string): Observable<void> {
-    return this.http.post<ApiResponse<void>>(`${this.api}/${billId}/email`, { email }).pipe(
+  emailInvoice(billId: number): Observable<void> {
+    return this.http.post<ApiResponse<void>>(`${this.api}/${billId}/email-invoice`, {}).pipe(
       map(response => {
         if (!response.success) {
           throw new Error(response.message);

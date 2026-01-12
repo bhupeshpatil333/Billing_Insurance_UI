@@ -153,22 +153,41 @@ export class BillListComponent implements OnInit, OnDestroy {
   }
 
   downloadInvoice() {
-    if (!this.billResult || !this.billResult.billId) {
+    if (!this.billResult || !(this.billResult.id || this.billResult.billId)) {
       this.toastr.warning('No bill generated to download invoice.', 'No Invoice');
       return;
     }
-    this.billingService.downloadInvoice(this.billResult.billId)
+    const billId = this.billResult.id || this.billResult.billId;
+    this.billingService.downloadInvoice(billId)
       .subscribe(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'Invoice.pdf';
+        a.download = `Invoice_${billId}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
         this.toastr.success('Invoice downloaded successfully!', 'Download Complete');
       }, error => {
         console.error('Error downloading invoice:', error);
         this.toastr.error('Failed to download invoice.', 'Error');
+      });
+  }
+
+  emailInvoice() {
+    if (!this.billResult || !(this.billResult.id || this.billResult.billId)) {
+      this.toastr.warning('No bill generated to email invoice.', 'No Invoice');
+      return;
+    }
+    const billId = this.billResult.id || this.billResult.billId;
+    this.billingService.emailInvoice(billId)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Invoice has been sent to the patient\'s registered email.', 'Email Sent');
+        },
+        error: (error) => {
+          console.error('Error emailing invoice:', error);
+          this.toastr.error('Failed to email invoice. Please try again.', 'Error');
+        }
       });
   }
 
