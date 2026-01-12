@@ -46,6 +46,34 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
           console.error('Error fetching bills:', error);
         }
       });
+
+    // Watch for bill selection changes to update max amount
+    this.paymentForm.get('billId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(billId => {
+        if (billId) {
+          const selectedBill = this.bills.find(b => b.billId === billId);
+          if (selectedBill) {
+            const maxAmount = selectedBill.remainingAmount || selectedBill.netPayable;
+            // Update amount validator with max amount
+            this.paymentForm.get('amount')?.setValidators([
+              Validators.required,
+              Validators.min(1),
+              Validators.max(maxAmount)
+            ]);
+            this.paymentForm.get('amount')?.updateValueAndValidity();
+          }
+        }
+      });
+  }
+
+  getSelectedBillRemainingAmount(): number {
+    const billId = this.paymentForm.get('billId')?.value;
+    if (billId) {
+      const bill = this.bills.find(b => b.billId === billId);
+      return bill?.remainingAmount || bill?.netPayable || 0;
+    }
+    return 0;
   }
 
   makePayment(): void {

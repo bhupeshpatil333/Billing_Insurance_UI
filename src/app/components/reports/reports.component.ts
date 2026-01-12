@@ -26,7 +26,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
   // Table columns for billing report
-  displayedColumns: string[] = ['invoiceNumber', 'patientName', 'grossAmount', 'insuranceAmount', 'netPayable', 'status', 'billDate'];
+  displayedColumns: string[] = ['invoiceNumber', 'patientName', 'grossAmount', 'insuranceAmount', 'netPayable', 'paidAmount', 'remainingAmount', 'status', 'billDate'];
 
   constructor(private reportService: ReportService) { }
 
