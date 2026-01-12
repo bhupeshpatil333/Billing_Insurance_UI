@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'ngx-toastr/toastr';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +15,7 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Fix Material Icons */
+/* Material Icons Fix */
 .material-icons {
     font-family: 'Material Icons' !important;
     font-weight: normal;
@@ -31,246 +32,173 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* CRITICAL: Enhanced Dropdown Panel Fixes */
+/* ===========================
+   Material Design Component Fixes
+   =========================== */
+
+/* Fix Material Select Dropdown */
 .mat-mdc-select-panel {
     background: white !important;
-    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
-        0px 8px 10px 1px rgba(0, 0, 0, 0.14),
-        0px 3px 14px 2px rgba(0, 0, 0, 0.12) !important;
-    border-radius: 4px !important;
-    min-width: 100% !important;
-    max-height: 256px !important;
-    overflow-y: auto !important;
-}
-
-.mat-mdc-select-panel .mat-mdc-option {
-    background-color: white !important;
-    color: rgba(0, 0, 0, 0.87) !important;
-    padding: 0 16px !important;
-    min-height: 48px !important;
-    line-height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-.mat-mdc-select-panel .mat-mdc-option:hover {
-    background-color: rgba(0, 0, 0, 0.04) !important;
-}
-
-.mat-mdc-select-panel .mat-mdc-option.mat-selected {
-    background-color: rgba(63, 81, 181, 0.12) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
 .mat-mdc-option {
-    background-color: white !important;
-    color: rgba(0, 0, 0, 0.87) !important;
+    color: #333 !important;
 }
 
 .mat-mdc-option:hover {
-    background-color: rgba(0, 0, 0, 0.04) !important;
-}
-
-.mat-mdc-option.mat-mdc-option-active {
-    background-color: rgba(0, 0, 0, 0.04) !important;
-}
-
-/* Fix select trigger */
-.mat-mdc-select-trigger {
-    background-color: transparent !important;
-}
-
-.mat-mdc-select-value {
-    color: rgba(0, 0, 0, 0.87) !important;
-}
-
-.mat-mdc-select-arrow {
-    color: rgba(0, 0, 0, 0.54) !important;
+    background-color: #f5f5f5 !important;
 }
 
 /* Fix Material Dialog */
 .mat-mdc-dialog-container {
-    background-color: white !important;
+    background: white !important;
+    overflow-x: hidden !important;
 }
 
-.mat-mdc-dialog-surface {
-    background-color: white !important;
+.mat-mdc-dialog-content {
+    overflow-x: hidden !important;
+    max-width: 100%;
+}
+
+.mat-mdc-dialog-title {
+    color: #333 !important;
 }
 
 /* Fix Material Buttons */
-.mat-mdc-button,
-.mat-mdc-raised-button,
-.mat-mdc-icon-button {
-    .mat-icon {
-        font-family: 'Material Icons' !important;
-    }
+.mat-mdc-button .mat-icon,
+.mat-mdc-raised-button .mat-icon {
+    font-family: 'Material Icons' !important;
 }
 
-/* Fix Material Form Fields */
-.mat-mdc-form-field {
-    .mat-icon {
-        font-family: 'Material Icons' !important;
-    }
-}
-
-.mat-mdc-form-field-appearance-outline .mat-mdc-form-field-outline {
-    color: rgba(0, 0, 0, 0.12) !important;
-}
-
-.mat-mdc-form-field-appearance-outline.mat-focused .mat-mdc-form-field-outline {
-    color: #3f51b5 !important;
-}
-
-/* CRITICAL: Table Header Fixes */
+/* Fix Material Table */
 .mat-mdc-table {
-    width: 100% !important;
-    background-color: white !important;
+    background: white !important;
 }
 
 .mat-mdc-header-row {
-    background-color: #f5f5f5 !important;
-    min-height: 56px !important;
-    display: table-row !important;
-}
-
-.mat-mdc-header-cell {
-    font-weight: 700 !important;
-    font-size: 14px !important;
-    color: rgba(0, 0, 0, 0.87) !important;
-    padding: 16px !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
-    text-align: left !important;
-    vertical-align: middle !important;
-    display: table-cell !important;
-}
-
-/* Set table header color to black */
-th.mat-mdc-header-cell {
-    color: black !important;
-}
-
-.mat-mdc-row {
-    min-height: 52px !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
-    display: table-row !important;
-}
-
-.mat-mdc-cell {
-    padding: 16px !important;
-    color: rgba(0, 0, 0, 0.87) !important;
-    font-size: 14px !important;
-    text-align: left !important;
-    vertical-align: middle !important;
-    display: table-cell !important;
-}
-
-.mat-mdc-row:hover {
     background-color: #f9fafb !important;
 }
 
-.mat-mdc-row:hover .mat-mdc-cell {
-    background-color: transparent !important;
+.mat-mdc-header-cell {
+    color: #000 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
 }
 
-/* Fix table container */
-.mat-mdc-table-container {
-    overflow-x: auto !important;
+.mat-mdc-cell {
+    color: #333 !important;
+}
+
+.mat-mdc-row:hover {
+    background-color: #f5f5f5 !important;
 }
 
 /* Fix Material Snackbar */
 .mat-mdc-snack-bar-container {
-    background-color: #323232 !important;
-    color: white !important;
+    background: white !important;
+    color: #333 !important;
 }
 
 /* Fix Material Tooltip */
 .mat-mdc-tooltip {
-    background-color: rgba(97, 97, 97, 0.9) !important;
+    background: rgba(97, 97, 97, 0.9) !important;
     color: white !important;
 }
 
-/* Ensure proper z-index for overlays */
-.cdk-overlay-container {
-    position: fixed !important;
-    z-index: 1000 !important;
-    pointer-events: none !important;
-}
-
-.cdk-overlay-container .cdk-overlay-pane {
-    pointer-events: auto !important;
-}
-
-.cdk-overlay-pane {
-    background-color: white !important;
-    opacity: 1 !important;
-}
-
-.cdk-overlay-backdrop {
-    background-color: rgba(0, 0, 0, 0.32) !important;
-}
-
-/* Fix select panel positioning */
-.cdk-overlay-connected-position-bounding-box {
-    position: absolute !important;
-}
-
-/* Fix Material Autocomplete Panel */
+/* Fix Material Autocomplete */
 .mat-mdc-autocomplete-panel {
-    background-color: white !important;
+    background: white !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Fix Material Menu */
 .mat-mdc-menu-panel {
-    background-color: white !important;
+    background: white !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
 .mat-mdc-menu-item {
-    background-color: white !important;
+    color: #333 !important;
 }
 
 .mat-mdc-menu-item:hover {
-    background-color: rgba(0, 0, 0, 0.04) !important;
+    background-color: #f5f5f5 !important;
 }
 
 /* Fix Material Paginator */
 .mat-mdc-paginator {
-    background-color: white !important;
-    border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
-}
-
-.mat-mdc-paginator-container {
-    padding: 0 8px !important;
-    min-height: 56px !important;
+    background: white !important;
 }
 
 /* Fix Material Card */
 .mat-mdc-card {
-    background-color: white !important;
+    background: white !important;
 }
 
-/* Ensure icons in summary cards are visible */
-mat-icon {
-    font-family: 'Material Icons' !important;
-    vertical-align: middle;
+/* ===========================
+   Form Field Fixes
+   =========================== */
+
+/* Hide form field subscript wrapper to remove extra lines */
+.mat-mdc-form-field-subscript-wrapper {
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
-/* Fix button icons */
-button mat-icon {
-    font-family: 'Material Icons' !important;
+/* Disable Tailwind's border utilities for Material form fields */
+.mat-mdc-text-field-wrapper {
+    border: none !important;
+    outline: none !important;
 }
 
-/* Fix form field prefix/suffix icons */
-.mat-mdc-form-field-icon-prefix mat-icon,
-.mat-mdc-form-field-icon-suffix mat-icon {
-    font-family: 'Material Icons' !important;
+/* Restore Material's native outline */
+.mat-mdc-text-field-wrapper .mat-mdc-notched-outline {
+    border-color: rgba(0, 0, 0, 0.38) !important;
 }
 
-/* Additional table styling for better visibility */
-th.mat-mdc-header-cell {
-    font-weight: 700 !important;
+.mat-mdc-text-field-wrapper:hover .mat-mdc-notched-outline {
+    border-color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.mat-focused .mat-mdc-notched-outline {
+    border-color: #3f51b5 !important;
+    border-width: 2px !important;
+}
+
+/* Ensure form fields don't cause overflow */
+.mat-mdc-form-field {
+    max-width: 100%;
+}
+
+/* ===========================
+   Table Styling
+   =========================== */
+
+/* Ensure table headers are visible and styled */
+.mat-mdc-table .mat-mdc-header-cell {
+    color: black !important;
+    font-weight: bold !important;
+}
+
+/* Add spacing to table headers */
+.mat-mdc-header-row {
+    min-height: 56px !important;
+}
+
+/* Add hover effect to table rows */
+.mat-mdc-row:hover {
     background-color: #f5f5f5 !important;
+    cursor: pointer;
 }
 
-td.mat-mdc-cell {
+/* Table borders */
+.mat-mdc-table {
+    border: 1px solid #e0e0e0 !important;
+}
+
+.mat-mdc-row,
+.mat-mdc-header-row {
     border-bottom-color: rgba(0, 0, 0, 0.12) !important;
 }
 

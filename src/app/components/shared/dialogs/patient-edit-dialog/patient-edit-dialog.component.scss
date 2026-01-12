@@ -1,26 +1,48 @@
-::ng-deep {
-    .patient-edit-dialog {
-        min-width: 500px;
+.patient-edit-dialog {
+    min-width: 500px;
+    max-width: 600px;
+    overflow-x: hidden;
 
-        .mat-mdc-dialog-title {
-            padding: 0;
-            margin: 0;
+    ::ng-deep .mat-mdc-dialog-container {
+        overflow-x: hidden;
+    }
+
+    .modern-field {
+        .mat-mdc-form-field-focus-overlay {
+            background-color: rgba(99, 102, 241, 0.05);
         }
 
-        .mat-mdc-dialog-content {
-            padding: 0;
-            margin: 0;
-            max-height: 70vh;
-            overflow-y: auto;
+        .field-icon {
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+            color: #6366f1;
         }
 
-        .mat-mdc-dialog-actions {
-            padding: 0;
-            margin: 0;
+        .error-icon {
+            font-size: 16px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    }
+
+    .form-field-wrapper {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
         }
 
-        .mat-mdc-form-field {
-            width: 100%;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
+
+    mat-dialog-actions button {
+        min-width: 120px;
     }
 }

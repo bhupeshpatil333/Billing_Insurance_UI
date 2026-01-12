@@ -3,6 +3,7 @@ import { ReportService } from '../../core/services/report.service';
 import { MaterialModule } from '../shared/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -28,7 +29,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   // Table columns for billing report
   displayedColumns: string[] = ['invoiceNumber', 'patientName', 'grossAmount', 'insuranceAmount', 'netPayable', 'paidAmount', 'remainingAmount', 'status', 'billDate'];
 
-  constructor(private reportService: ReportService) { }
+  constructor(
+    private reportService: ReportService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
     // Set default dates: 1st of current month to today
@@ -41,7 +45,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   loadReports() {
     if (!this.fromDate || !this.toDate) {
-      alert('Please select both From and To dates');
+      this.toastr.warning('Please select both From and To dates', 'Incomplete Date Range');
       return;
     }
 

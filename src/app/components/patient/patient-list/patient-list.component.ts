@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { PatientEditDialogComponent } from '../../shared/dialogs/patient-edit-dialog/patient-edit-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-patient-list',
@@ -31,7 +32,8 @@ export class PatientListComponent implements OnInit, OnDestroy {
 
   constructor(
     private patientService: PatientService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {
     this.dataSource = new MatTableDataSource<any>([]);
   }
@@ -88,12 +90,12 @@ export class PatientListComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (patientId) => {
               // Refresh the list
+              this.toastr.success(`Patient added successfully with ID: ${patientId}`, 'Patient Added');
               this.loadPatients();
-              alert(`Patient added successfully with ID: ${patientId}`);
             },
             error: (error) => {
               console.error('Error adding patient:', error);
-              alert('Error adding patient. Please try again.');
+              this.toastr.error(error.error?.message || 'Failed to add patient', 'Error');
             }
           });
       }
@@ -117,12 +119,12 @@ export class PatientListComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               // Refresh the list
+              this.toastr.success('Patient updated successfully', 'Patient Updated');
               this.loadPatients();
-              alert('Patient updated successfully!');
             },
             error: (error) => {
               console.error('Error updating patient:', error);
-              alert('Error updating patient. Please try again.');
+              this.toastr.error(error.error?.message || 'Failed to update patient', 'Error');
             }
           });
       }
@@ -148,12 +150,12 @@ export class PatientListComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               // Refresh the list
+              this.toastr.success('Patient deleted successfully', 'Patient Deleted');
               this.loadPatients();
-              alert('Patient deleted successfully!');
             },
             error: (error) => {
               console.error('Error deleting patient:', error);
-              alert('Error deleting patient. Please try again.');
+              this.toastr.error(error.error?.message || 'Failed to delete patient', 'Error');
             }
           });
       }

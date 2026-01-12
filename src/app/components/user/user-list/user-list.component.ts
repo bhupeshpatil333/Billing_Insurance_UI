@@ -8,6 +8,7 @@ import { UserService, User } from '../../../core/services/user.service';
 import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { UserEditDialogComponent } from '../../shared/dialogs/user-edit-dialog/user-edit-dialog.component';
 import { UserCreateDialogComponent } from '../../shared/dialogs/user-create-dialog/user-create-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-list',
@@ -24,7 +25,8 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -42,7 +44,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching users:', error);
-          alert('Error loading users: ' + error.message);
+          this.toastr.error('Failed to load users', 'Error');
           this.isLoading = false;
         }
       });
@@ -59,12 +61,12 @@ export class UserListComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
+              this.toastr.success('User created successfully', 'Success');
               this.loadUsers();
-              alert('User created successfully!');
             },
             error: (error) => {
               console.error('Error creating user:', error);
-              alert('Error creating user: ' + error.message);
+              this.toastr.error(error.error?.message || 'Failed to create user', 'Error');
             }
           });
       }
@@ -83,12 +85,12 @@ export class UserListComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
+              this.toastr.success('User role updated successfully', 'Success');
               this.loadUsers();
-              alert('User role updated successfully!');
             },
             error: (error) => {
               console.error('Error updating user role:', error);
-              alert('Error updating user role: ' + error.message);
+              this.toastr.error(error.error?.message || 'Failed to update user role', 'Error');
             }
           });
       }
@@ -113,12 +115,12 @@ export class UserListComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
+              this.toastr.success(`User ${action}d successfully`, 'Success');
               this.loadUsers();
-              alert(`User ${action}d successfully!`);
             },
             error: (error) => {
               console.error('Error updating user status:', error);
-              alert('Error updating user status: ' + error.message);
+              this.toastr.error(error.error?.message || 'Failed to update user status', 'Error');
             }
           });
       }

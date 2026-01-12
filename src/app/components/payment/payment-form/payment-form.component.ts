@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MaterialModule } from '../../shared/material.module';
 import { PaymentService } from '../../../core/services/payment.service';
 import { BillingService } from '../../../core/services/billing.service';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -24,7 +25,8 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
-    private billingService: BillingService
+    private billingService: BillingService,
+    private toastr: ToastrService
   ) {
     this.paymentForm = this.fb.group({
       billId: ['', Validators.required],
@@ -44,6 +46,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching bills:', error);
+          this.toastr.error('Failed to load bills', 'Error');
         }
       });
 
@@ -89,7 +92,23 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             console.log('Payment processed successfully:', response);
-            alert(`Payment successful! Status: ${response.status}`);
+
+            // Show success toast with status
+            if (response.status === 'Paid') {
+              this.toastr.success(`Bill fully paid! Amount: ₹${paymentData.paidAmount}`, 'Payment Successful', {
+                timeOut: 4000
+              });
+            } else if (response.status === 'Partially Paid') {
+              const remaining = (response as any).remainingBalance || 0;
+              this.toastr.success(
+                `Partial payment recorded. Remaining: ₹${remaining}`,
+                'Payment Successful',
+                { timeOut: 4000 }
+              );
+            } else {
+              this.toastr.success(`Payment of ₹${paymentData.paidAmount} processed successfully`, 'Payment Successful');
+            }
+
             this.paymentForm.reset();
 
             // Reload bills to remove paid bill from dropdown
@@ -97,9 +116,14 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Error processing payment:', error);
-            alert('Error processing payment: ' + error.message);
+            const errorMessage = error.error?.message || error.message || 'Payment processing failed';
+            this.toastr.error(errorMessage, 'Payment Failed', {
+              timeOut: 5000
+            });
           }
         });
+    } else {
+      this.toastr.warning('Please fill in all required fields', 'Incomplete Form');
     }
   }
 

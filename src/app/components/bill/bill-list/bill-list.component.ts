@@ -9,6 +9,7 @@ import { InsuranceService } from '../../../core/services/insurance.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 interface Service {
   serviceId?: string;
@@ -54,7 +55,8 @@ export class BillListComponent implements OnInit, OnDestroy {
     private patientService: PatientService,
     private billingService: BillingService,
     private insuranceService: InsuranceService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -70,6 +72,7 @@ export class BillListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching patients:', error);
+          this.toastr.error('Failed to load patients.', 'Error');
         }
       });
   }
@@ -96,6 +99,7 @@ export class BillListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching insurance:', error);
+          this.toastr.error('Failed to fetch insurance details.', 'Error');
           this.insuranceCoverage = 0;
           this.calculateBill();
         }
@@ -117,7 +121,7 @@ export class BillListComponent implements OnInit, OnDestroy {
 
   generateBill(): void {
     if (!this.patientId || this.grossAmount === 0) {
-      alert('Please select a patient and at least one service');
+      this.toastr.warning('Please select a patient and at least one service', 'Incomplete Information');
       return;
     }
 
@@ -139,16 +143,20 @@ export class BillListComponent implements OnInit, OnDestroy {
           this.netPayable = res.netPayable; // Update net payable from backend response
           this.insuranceAmount = res.insuranceAmount;
           this.grossAmount = res.grossAmount;
-          alert('Bill generated successfully!');
+          this.toastr.success('Bill generated successfully!', 'Success');
         },
         error: (error) => {
           console.error('Error generating bill:', error);
-          alert('Error generating bill. Please try again.');
+          this.toastr.error('Error generating bill. Please try again.', 'Error');
         }
       });
   }
 
   downloadInvoice() {
+    if (!this.billResult || !this.billResult.billId) {
+      this.toastr.warning('No bill generated to download invoice.', 'No Invoice');
+      return;
+    }
     this.billingService.downloadInvoice(this.billResult.billId)
       .subscribe(blob => {
         const url = window.URL.createObjectURL(blob);
@@ -157,13 +165,17 @@ export class BillListComponent implements OnInit, OnDestroy {
         a.download = 'Invoice.pdf';
         a.click();
         window.URL.revokeObjectURL(url);
+        this.toastr.success('Invoice downloaded successfully!', 'Download Complete');
+      }, error => {
+        console.error('Error downloading invoice:', error);
+        this.toastr.error('Failed to download invoice.', 'Error');
       });
   }
 
 
   makePayment(): void {
     if (!this.billResult) {
-      alert('Please generate a bill first');
+      this.toastr.warning('Please generate a bill first', 'No Bill Generated');
       return;
     }
 
@@ -177,12 +189,12 @@ export class BillListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          alert('Payment Successful!');
+          this.toastr.success('Payment Successful!', 'Success');
           this.resetForm();
         },
         error: (error) => {
           console.error('Error processing payment:', error);
-          alert('Payment failed. Please try again.');
+          this.toastr.error('Payment failed. Please try again.', 'Error');
         }
       });
   }
