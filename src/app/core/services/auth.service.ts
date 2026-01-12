@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
@@ -25,7 +26,10 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) { }
 
   login(data: any): Observable<LoginResponse> {
     return this.http.post<ApiResponse<LoginResponse>>(`${this.api}/login`, data).pipe(
@@ -80,7 +84,8 @@ export class AuthService {
   logout(): void {
     localStorage.clear();
     this.isAuthenticatedSubject.next(false);
-    console.log('User logged out');
+    this.router.navigate(['/login']);
+    console.log('User logged out and redirected');
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
