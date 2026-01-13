@@ -17,8 +17,8 @@ import { takeUntil } from 'rxjs/operators';
 export class ReportsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  fromDate: string = '';
-  toDate: string = '';
+  fromDate: Date | null = null;
+  toDate: Date | null = null;
   maxDate: Date = new Date();
 
   billingReport: any[] = [];
@@ -36,12 +36,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // Set default dates: 1st of current month to today
+    // Set default dates: January 1st of current year to Today
     const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-    this.fromDate = firstDayOfMonth.toISOString().split('T')[0];
-    this.toDate = today.toISOString().split('T')[0];
+    this.fromDate = new Date(today.getFullYear(), 0, 1); // 0 is January
+    this.toDate = today;
   }
 
   loadReports() {
@@ -52,8 +50,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
+    // Convert Date objects to ISO strings for API (YYYY-MM-DD)
+    const fromStr = this.fromDate ? this.fromDate.toISOString().split('T')[0] : '';
+    const toStr = this.toDate ? this.toDate.toISOString().split('T')[0] : '';
+
     // Load billing report
-    this.reportService.getBillingReport(this.fromDate, this.toDate)
+    this.reportService.getBillingReport(fromStr, toStr)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -76,7 +78,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
 
     // Load payment report
-    this.reportService.getPaymentReport(this.fromDate, this.toDate)
+    this.reportService.getPaymentReport(fromStr, toStr)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -87,7 +89,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
 
     // Load insurance report
-    this.reportService.getInsuranceReport(this.fromDate, this.toDate)
+    this.reportService.getInsuranceReport(fromStr, toStr)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {

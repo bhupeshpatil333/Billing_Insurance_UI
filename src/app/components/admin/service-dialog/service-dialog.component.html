@@ -8,7 +8,7 @@
     <form [formGroup]="serviceForm" class="flex flex-col space-y-4">
 
       <!-- Service Name -->
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field class="w-full">
         <mat-label>Service Name</mat-label>
         <input matInput formControlName="serviceName" placeholder="e.g. Master Health Checkup" required>
         <mat-icon matPrefix class="mr-2">medical_services</mat-icon>
@@ -25,7 +25,7 @@
       </mat-form-field>
 
       <!-- Cost -->
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field class="w-full">
         <mat-label>Base Cost (₹)</mat-label>
         <input matInput type="number" formControlName="cost" placeholder="0.00" required>
         <mat-icon matPrefix class="mr-2">payments</mat-icon>
