@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
     selector: 'app-user-create-dialog',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MaterialModule, MatDialogModule],
+    imports: [ReactiveFormsModule, MaterialModule, MatDialogModule],
     templateUrl: './user-create-dialog.component.html',
     styleUrl: './user-create-dialog.component.scss'
 })

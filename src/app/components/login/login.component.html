@@ -1,89 +1,101 @@
 <div
-    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-4">
-    <div class="w-full max-w-md">
-        <!-- Login Card -->
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-center">
-                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
-                    <span class="text-5xl">🏥</span>
-                </div>
-                <h1 class="text-3xl font-bold text-white mb-2">MediCare</h1>
-                <p class="text-indigo-100 text-sm">Billing & Insurance System</p>
-            </div>
-
-            <!-- Form -->
-            <div class="px-8 py-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome Back</h2>
-
-                <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6">
-                    <!-- Email Field -->
-                    <mat-form-field class="w-full">
-                        <mat-label>Email Address</mat-label>
-                        <input matInput type="email" formControlName="email" placeholder="Enter your email" required>
-                        <mat-icon matPrefix class="mr-2 text-indigo-500">email</mat-icon>
-                        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                            <mat-icon class="text-xs align-middle">error</mat-icon>
-                            Email address is required to sign in
-                        </mat-error>
-                        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                            <mat-icon class="text-xs align-middle">error</mat-icon>
-                            Please enter a valid work email address
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Password Field -->
-                    <mat-form-field class="w-full">
-                        <mat-label>Password</mat-label>
-                        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
-                            placeholder="Enter your password" required>
-                        <mat-icon matPrefix class="mr-2 text-indigo-500">lock</mat-icon>
-                        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
-                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
-                            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                            <mat-icon class="text-xs align-middle">error</mat-icon>
-                            Account password is required
-                        </mat-error>
-                        <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-                            <mat-icon class="text-xs align-middle">error</mat-icon>
-                            Password must be at least 6 characters long
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Error Message -->
-                    <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                        <p class="text-red-700 text-sm">{{ errorMessage }}</p>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" [disabled]="loginForm.invalid || isLoading"
-                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
-                        <div class="flex items-center justify-center space-x-2">
-                            <mat-spinner *ngIf="isLoading" diameter="24" class="inline-block"></mat-spinner>
-                            <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
-                        </div>
-                    </button>
-                </form>
-
-                <!-- Footer -->
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
-                        Don't have an account?
-                        <a href="#" class="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
-                            Contact Admin
-                        </a>
-                    </p>
-                </div>
-            </div>
+  class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-4">
+  <div class="w-full max-w-md">
+    <!-- Login Card -->
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-center">
+        <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+          <span class="text-5xl">🏥</span>
         </div>
+        <h1 class="text-3xl font-bold text-white mb-2">MediCare</h1>
+        <p class="text-indigo-100 text-sm">Billing & Insurance System</p>
+      </div>
 
-        <!-- Additional Info -->
-        <div class="mt-6 text-center">
-            <p class="text-white text-sm drop-shadow-lg">
-                © 2026 MediCare. All rights reserved.
+      <!-- Form -->
+      <div class="px-8 py-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome Back</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6">
+          <!-- Email Field -->
+          <mat-form-field class="w-full">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter your email" required>
+            <mat-icon matPrefix class="mr-2 text-indigo-500">email</mat-icon>
+            @if (loginForm.get('email')?.hasError('required')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle">error</mat-icon>
+                Email address is required to sign in
+              </mat-error>
+            }
+            @if (loginForm.get('email')?.hasError('email')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle">error</mat-icon>
+                Please enter a valid work email address
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field class="w-full">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+              placeholder="Enter your password" required>
+              <mat-icon matPrefix class="mr-2 text-indigo-500">lock</mat-icon>
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              @if (loginForm.get('password')?.hasError('required')) {
+                <mat-error>
+                  <mat-icon class="text-xs align-middle">error</mat-icon>
+                  Account password is required
+                </mat-error>
+              }
+              @if (loginForm.get('password')?.hasError('minlength')) {
+                <mat-error>
+                  <mat-icon class="text-xs align-middle">error</mat-icon>
+                  Password must be at least 6 characters long
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Error Message -->
+            @if (errorMessage) {
+              <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <p class="text-red-700 text-sm">{{ errorMessage }}</p>
+              </div>
+            }
+
+            <!-- Submit Button -->
+            <button type="submit" [disabled]="loginForm.invalid || isLoading"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
+              <div class="flex items-center justify-center space-x-2">
+                @if (isLoading) {
+                  <mat-spinner diameter="24" class="inline-block"></mat-spinner>
+                }
+                <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
+              </div>
+            </button>
+          </form>
+
+          <!-- Footer -->
+          <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+              Don't have an account?
+              <a href="#" class="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
+                Contact Admin
+              </a>
             </p>
+          </div>
         </div>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="mt-6 text-center">
+        <p class="text-white text-sm drop-shadow-lg">
+          © 2026 MediCare. All rights reserved.
+        </p>
+      </div>
     </div>
-</div>
+  </div>

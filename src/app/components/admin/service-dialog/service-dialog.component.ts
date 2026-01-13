@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../shared/material.module';
@@ -9,7 +9,7 @@ import { NotificationService } from '../../../core/services/notification.service
 @Component({
     selector: 'app-service-dialog',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+    imports: [ReactiveFormsModule, MaterialModule],
     templateUrl: './service-dialog.component.html'
 })
 export class ServiceDialogComponent implements OnInit {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -10,7 +10,7 @@ import { ConfirmDialogComponent } from '../../components/shared/dialogs/confirm-
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent, MaterialModule],
+  imports: [RouterModule, SidebarComponent, MaterialModule],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })

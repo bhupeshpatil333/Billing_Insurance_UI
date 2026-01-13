@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
@@ -16,7 +16,7 @@ export interface CreatePolicyRequest {
 @Component({
     selector: 'app-policy-create-dialog',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+    imports: [ReactiveFormsModule, MaterialModule],
     templateUrl: './policy-create-dialog.component.html',
     styleUrl: './policy-create-dialog.component.scss'
 })

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [MaterialModule],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })

@@ -1,113 +1,127 @@
 <div class="space-y-6">
-    <!-- Page Header -->
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Generate Bill</h1>
-        <p class="text-gray-600">Create a new bill for patient services</p>
+  <!-- Page Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Generate Bill</h1>
+    <p class="text-gray-600">Create a new bill for patient services</p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white rounded-xl shadow-lg p-8 max-w-3xl">
+    <form (ngSubmit)="generateBill()" class="space-y-6">
+
+      <!-- Patient Selection -->
+      <mat-form-field class="w-full">
+        <mat-label>Select Patient</mat-label>
+        <mat-select [(ngModel)]="patientId" name="patient" required>
+          @for (p of patients; track p) {
+            <mat-option [value]="p.patientId">
+              {{ p.fullName }}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>person</mat-icon>
+        @if (!patientId) {
+          <mat-error>
+            <mat-icon class="text-xs align-middle">error</mat-icon>
+            Patient selection is required to generate a bill
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Services Selection Table -->
+      <div class="space-y-4">
+        <label class="block text-sm font-semibold text-gray-700 flex items-center">
+          <span class="text-xl mr-2">💉</span>
+          Select Services & Quantities
+        </label>
+
+        <div class="border-2 border-gray-100 rounded-xl overflow-hidden shadow-sm">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-bold">
+              <tr>
+                <th class="px-6 py-4">Service</th>
+                <th class="px-6 py-4">Cost</th>
+                <th class="px-6 py-4 text-center">Quantity</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+              @for (service of services; track service) {
+                <tr class="hover:bg-indigo-50/30 transition-colors">
+                  <td class="px-6 py-4">
+                    <span class="font-medium text-gray-800">{{ service.serviceName }}</span>
+                  </td>
+                  <td class="px-6 py-4 font-bold text-indigo-600">
+                    ₹{{ service.cost | number:'1.0-0' }}
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center justify-center space-x-3">
+                      <button type="button" (click)="updateQuantity(service, -1)"
+                        [disabled]="service.quantity <= 0"
+                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-red-50 hover:text-red-600 disabled:opacity-30 transition-all">
+                        <mat-icon class="text-sm">remove</mat-icon>
+                      </button>
+                      <input type="number" [(ngModel)]="service.quantity"
+                        name="qty-{{service.serviceId}}"
+                        class="w-12 text-center font-bold border-b-2 border-transparent focus:border-indigo-500 focus:outline-none bg-transparent"
+                        min="0">
+                        <button type="button" (click)="updateQuantity(service, 1)"
+                          class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-green-50 hover:text-green-600 transition-all">
+                          <mat-icon class="text-sm">add</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State for Services -->
+          @if (services.length === 0 && !isLoading) {
+            <div
+              class="p-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+              <p class="text-gray-500 italic">No active services available in the master list.</p>
+            </div>
+          }
+
+          <!-- Service Validation Error -->
+          @if (calculateTotal() === 0 && patientId) {
+            <div class="mt-2 text-red-500 text-xs flex items-center">
+              <mat-icon class="text-xs mr-1">error</mat-icon>
+              Please select at least one service with quantity > 0
+            </div>
+          }
+        </div>
+
+        <!-- Total Amount -->
+        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border-2 border-indigo-200">
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
+            <span class="text-3xl font-bold text-indigo-600">
+              ₹{{ calculateTotal() }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex space-x-4 pt-4">
+          <button type="submit" [disabled]="!patientId || calculateTotal() === 0 || isLoading"
+            class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
+            <div class="flex items-center justify-center space-x-2">
+              @if (isLoading) {
+                <mat-spinner diameter="24" class="inline-block"></mat-spinner>
+              }
+              @if (!isLoading) {
+                <span class="mr-2">💰</span>
+              }
+              <span>{{ isLoading ? 'Generating...' : 'Generate Bill' }}</span>
+            </div>
+          </button>
+          <button type="button"
+            class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+            Clear
+          </button>
+        </div>
+      </form>
     </div>
-
-    <!-- Form Card -->
-    <div class="bg-white rounded-xl shadow-lg p-8 max-w-3xl">
-        <form (ngSubmit)="generateBill()" class="space-y-6">
-
-            <!-- Patient Selection -->
-            <mat-form-field class="w-full">
-                <mat-label>Select Patient</mat-label>
-                <mat-select [(ngModel)]="patientId" name="patient" required>
-                    <mat-option *ngFor="let p of patients" [value]="p.patientId">
-                        {{ p.fullName }}
-                    </mat-option>
-                </mat-select>
-                <mat-icon matPrefix>person</mat-icon>
-                <mat-error *ngIf="!patientId">
-                    <mat-icon class="text-xs align-middle">error</mat-icon>
-                    Patient selection is required to generate a bill
-                </mat-error>
-            </mat-form-field>
-
-            <!-- Services Selection Table -->
-            <div class="space-y-4">
-                <label class="block text-sm font-semibold text-gray-700 flex items-center">
-                    <span class="text-xl mr-2">💉</span>
-                    Select Services & Quantities
-                </label>
-
-                <div class="border-2 border-gray-100 rounded-xl overflow-hidden shadow-sm">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-bold">
-                            <tr>
-                                <th class="px-6 py-4">Service</th>
-                                <th class="px-6 py-4">Cost</th>
-                                <th class="px-6 py-4 text-center">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 bg-white">
-                            <tr *ngFor="let service of services" class="hover:bg-indigo-50/30 transition-colors">
-                                <td class="px-6 py-4">
-                                    <span class="font-medium text-gray-800">{{ service.serviceName }}</span>
-                                </td>
-                                <td class="px-6 py-4 font-bold text-indigo-600">
-                                    ₹{{ service.cost | number:'1.0-0' }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center justify-center space-x-3">
-                                        <button type="button" (click)="updateQuantity(service, -1)"
-                                            [disabled]="service.quantity <= 0"
-                                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-red-50 hover:text-red-600 disabled:opacity-30 transition-all">
-                                            <mat-icon class="text-sm">remove</mat-icon>
-                                        </button>
-                                        <input type="number" [(ngModel)]="service.quantity"
-                                            name="qty-{{service.serviceId}}"
-                                            class="w-12 text-center font-bold border-b-2 border-transparent focus:border-indigo-500 focus:outline-none bg-transparent"
-                                            min="0">
-                                        <button type="button" (click)="updateQuantity(service, 1)"
-                                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-green-50 hover:text-green-600 transition-all">
-                                            <mat-icon class="text-sm">add</mat-icon>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Empty State for Services -->
-                <div *ngIf="services.length === 0 && !isLoading"
-                    class="p-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                    <p class="text-gray-500 italic">No active services available in the master list.</p>
-                </div>
-
-                <!-- Service Validation Error -->
-                <div *ngIf="calculateTotal() === 0 && patientId" class="mt-2 text-red-500 text-xs flex items-center">
-                    <mat-icon class="text-xs mr-1">error</mat-icon>
-                    Please select at least one service with quantity > 0
-                </div>
-            </div>
-
-            <!-- Total Amount -->
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border-2 border-indigo-200">
-                <div class="flex items-center justify-between">
-                    <span class="text-lg font-semibold text-gray-700">Total Amount:</span>
-                    <span class="text-3xl font-bold text-indigo-600">
-                        ₹{{ calculateTotal() }}
-                    </span>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="flex space-x-4 pt-4">
-                <button type="submit" [disabled]="!patientId || calculateTotal() === 0 || isLoading"
-                    class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
-                    <div class="flex items-center justify-center space-x-2">
-                        <mat-spinner *ngIf="isLoading" diameter="24" class="inline-block"></mat-spinner>
-                        <span *ngIf="!isLoading" class="mr-2">💰</span>
-                        <span>{{ isLoading ? 'Generating...' : 'Generate Bill' }}</span>
-                    </div>
-                </button>
-                <button type="button"
-                    class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                    Clear
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+  </div>

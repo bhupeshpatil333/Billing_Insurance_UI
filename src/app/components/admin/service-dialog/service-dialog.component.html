@@ -1,69 +1,81 @@
 <div class="p-2">
-    <h2 mat-dialog-title class="text-2xl font-bold flex items-center border-b pb-4 mb-4">
-        <span class="mr-2">{{ isEditMode ? '✏️ Edit' : '➕ Add' }}</span>
-        Service Information
-    </h2>
+  <h2 mat-dialog-title class="text-2xl font-bold flex items-center border-b pb-4 mb-4">
+    <span class="mr-2">{{ isEditMode ? '✏️ Edit' : '➕ Add' }}</span>
+    Service Information
+  </h2>
 
-    <mat-dialog-content class="mt-4">
-        <form [formGroup]="serviceForm" class="flex flex-col space-y-4">
+  <mat-dialog-content class="mt-4">
+    <form [formGroup]="serviceForm" class="flex flex-col space-y-4">
 
-            <!-- Service Name -->
-            <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Service Name</mat-label>
-                <input matInput formControlName="serviceName" placeholder="e.g. Master Health Checkup" required>
-                <mat-icon matPrefix class="mr-2">medical_services</mat-icon>
-                <mat-error *ngIf="serviceForm.get('serviceName')?.hasError('required')">
-                    Service name is required
-                </mat-error>
-                <mat-error *ngIf="serviceForm.get('serviceName')?.hasError('minlength')">
-                    Minimum 3 characters required
-                </mat-error>
-            </mat-form-field>
+      <!-- Service Name -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Service Name</mat-label>
+        <input matInput formControlName="serviceName" placeholder="e.g. Master Health Checkup" required>
+        <mat-icon matPrefix class="mr-2">medical_services</mat-icon>
+        @if (serviceForm.get('serviceName')?.hasError('required')) {
+          <mat-error>
+            Service name is required
+          </mat-error>
+        }
+        @if (serviceForm.get('serviceName')?.hasError('minlength')) {
+          <mat-error>
+            Minimum 3 characters required
+          </mat-error>
+        }
+      </mat-form-field>
 
-            <!-- Cost -->
-            <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Base Cost (₹)</mat-label>
-                <input matInput type="number" formControlName="cost" placeholder="0.00" required>
-                <mat-icon matPrefix class="mr-2">payments</mat-icon>
-                <mat-error *ngIf="serviceForm.get('cost')?.hasError('required')">
-                    Cost is required
-                </mat-error>
-                <mat-error *ngIf="serviceForm.get('cost')?.hasError('min')">
-                    Cost cannot be negative
-                </mat-error>
-            </mat-form-field>
+      <!-- Cost -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Base Cost (₹)</mat-label>
+        <input matInput type="number" formControlName="cost" placeholder="0.00" required>
+        <mat-icon matPrefix class="mr-2">payments</mat-icon>
+        @if (serviceForm.get('cost')?.hasError('required')) {
+          <mat-error>
+            Cost is required
+          </mat-error>
+        }
+        @if (serviceForm.get('cost')?.hasError('min')) {
+          <mat-error>
+            Cost cannot be negative
+          </mat-error>
+        }
+      </mat-form-field>
 
-            <!-- Status (Only in Edit Mode) -->
-            <mat-form-field appearance="outline" class="w-full" *ngIf="isEditMode">
-                <mat-label>Service Status</mat-label>
-                <mat-select formControlName="isActive">
-                    <mat-option [value]="true">Active</mat-option>
-                    <mat-option [value]="false">Inactive</mat-option>
-                </mat-select>
-                <mat-icon matPrefix class="mr-2 border-none">
-                    {{ serviceForm.get('isActive')?.value ? 'check_circle' : 'cancel' }}
-                </mat-icon>
-            </mat-form-field>
+      <!-- Status (Only in Edit Mode) -->
+      @if (isEditMode) {
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Service Status</mat-label>
+          <mat-select formControlName="isActive">
+            <mat-option [value]="true">Active</mat-option>
+            <mat-option [value]="false">Inactive</mat-option>
+          </mat-select>
+          <mat-icon matPrefix class="mr-2 border-none">
+            {{ serviceForm.get('isActive')?.value ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+        </mat-form-field>
+      }
 
-            <div
-                class="bg-blue-50 p-4 rounded-lg flex items-start space-x-3 text-blue-700 text-sm border border-blue-100">
-                <mat-icon class="mt-1">info</mat-icon>
-                <p>This cost will be the base price used in all future bill calculations. Backend recalculations will
-                    use this value.</p>
-            </div>
-        </form>
-    </mat-dialog-content>
+      <div
+        class="bg-blue-50 p-4 rounded-lg flex items-start space-x-3 text-blue-700 text-sm border border-blue-100">
+        <mat-icon class="mt-1">info</mat-icon>
+        <p>This cost will be the base price used in all future bill calculations. Backend recalculations will
+        use this value.</p>
+      </div>
+    </form>
+  </mat-dialog-content>
 
-    <mat-dialog-actions class="flex justify-end space-x-3 border-t pt-4 mt-6">
-        <button mat-button (click)="onCancel()" [disabled]="isLoading" class="px-6 py-2">
-            Cancel
-        </button>
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="serviceForm.invalid || isLoading"
-            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-2 rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all font-bold">
-            <div class="flex items-center space-x-2">
-                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block"></mat-spinner>
-                <span>{{ isEditMode ? 'Update Service' : 'Create Service' }}</span>
-            </div>
-        </button>
-    </mat-dialog-actions>
+  <mat-dialog-actions class="flex justify-end space-x-3 border-t pt-4 mt-6">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading" class="px-6 py-2">
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="serviceForm.invalid || isLoading"
+      class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-2 rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all font-bold">
+      <div class="flex items-center space-x-2">
+        @if (isLoading) {
+          <mat-spinner diameter="20" class="inline-block"></mat-spinner>
+        }
+        <span>{{ isEditMode ? 'Update Service' : 'Create Service' }}</span>
+      </div>
+    </button>
+  </mat-dialog-actions>
 </div>

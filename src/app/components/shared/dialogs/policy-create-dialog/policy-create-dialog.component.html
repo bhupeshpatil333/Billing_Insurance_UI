@@ -1,135 +1,155 @@
 <div class="policy-create-dialog">
-    <!-- Modern Header with Gradient -->
-    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 -m-6 mb-6 p-6 rounded-t-lg">
-        <h2 mat-dialog-title class="text-2xl font-bold text-white mb-0 flex items-center">
-            <mat-icon class="text-4xl mr-3">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
-            {{ isEditMode ? 'Edit Insurance Policy' : 'Create New Insurance Policy' }}
-        </h2>
-        <!-- <p class="text-emerald-100 text-sm mt-2">{{ isEditMode ? 'Update policy details and coverage' : 'Set up a new
-            insurance policy with coverage details' }}</p> -->
-    </div>
+  <!-- Modern Header with Gradient -->
+  <div class="bg-gradient-to-r from-emerald-600 to-teal-600 -m-6 mb-6 p-6 rounded-t-lg">
+    <h2 mat-dialog-title class="text-2xl font-bold text-white mb-0 flex items-center">
+      <mat-icon class="text-4xl mr-3">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+      {{ isEditMode ? 'Edit Insurance Policy' : 'Create New Insurance Policy' }}
+    </h2>
+    <!-- <p class="text-emerald-100 text-sm mt-2">{{ isEditMode ? 'Update policy details and coverage' : 'Set up a new
+  insurance policy with coverage details' }}</p> -->
+</div>
 
-    <mat-dialog-content class="py-6">
-        <form [formGroup]="policyForm" class="space-y-5">
+<mat-dialog-content class="py-6">
+  <form [formGroup]="policyForm" class="space-y-5">
 
-            <!-- Policy Number -->
-            <div class="form-field-wrapper">
-                <mat-form-field class="w-full modern-field">
-                    <mat-label>
-                        <mat-icon class="field-icon">confirmation_number</mat-icon>
-                        Policy Number
-                    </mat-label>
-                    <input matInput formControlName="policyNumber" placeholder="e.g., POL-2026-001" required
-                        class="text-lg">
-                    <mat-hint>Unique policy identifier</mat-hint>
-                    <mat-error *ngIf="policyForm.get('policyNumber')?.hasError('required')">
-                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                        Unique policy number is required
-                    </mat-error>
-                    <mat-error *ngIf="policyForm.get('policyNumber')?.hasError('minlength')">
-                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                        Policy number must be 3 or more characters
-                    </mat-error>
-                </mat-form-field>
+    <!-- Policy Number -->
+    <div class="form-field-wrapper">
+      <mat-form-field class="w-full modern-field">
+        <mat-label>
+          <mat-icon class="field-icon">confirmation_number</mat-icon>
+          Policy Number
+        </mat-label>
+        <input matInput formControlName="policyNumber" placeholder="e.g., POL-2026-001" required
+          class="text-lg">
+          <mat-hint>Unique policy identifier</mat-hint>
+          @if (policyForm.get('policyNumber')?.hasError('required')) {
+            <mat-error>
+              <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+              Unique policy number is required
+            </mat-error>
+          }
+          @if (policyForm.get('policyNumber')?.hasError('minlength')) {
+            <mat-error>
+              <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+              Policy number must be 3 or more characters
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Coverage Percentage -->
+      <div class="form-field-wrapper">
+        <mat-form-field class="w-full modern-field">
+          <mat-label>
+            <mat-icon class="field-icon">percent</mat-icon>
+            Coverage Percentage
+          </mat-label>
+          <input matInput type="number" formControlName="coveragePercentage" placeholder="e.g., 80" min="0"
+            max="100" required class="text-lg">
+            <span matTextSuffix class="text-gray-500 mr-2">%</span>
+            <mat-hint>Coverage percentage (0-100)</mat-hint>
+            @if (policyForm.get('coveragePercentage')?.hasError('required')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                Coverage percentage is required
+              </mat-error>
+            }
+            @if (policyForm.get('coveragePercentage')?.hasError('min')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                Coverage must be 0% or higher
+              </mat-error>
+            }
+            @if (policyForm.get('coveragePercentage')?.hasError('max')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                Coverage cannot exceed 100%
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Date Range -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Valid From Date -->
+          <div class="form-field-wrapper">
+            <mat-form-field class="w-full modern-field">
+              <mat-label>
+                <mat-icon class="field-icon">event</mat-icon>
+                Valid From
+              </mat-label>
+              <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required
+                placeholder="Start date" class="text-lg" (click)="pickerFrom.open()" readonly>
+                <mat-datepicker-toggle matIconSuffix [for]="pickerFrom">
+                  <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+                @if (policyForm.get('validFrom')?.hasError('required')) {
+                  <mat-error>
+                    <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                    Policy 'Valid From' date is required
+                  </mat-error>
+                }
+              </mat-form-field>
             </div>
 
-            <!-- Coverage Percentage -->
+            <!-- Valid To Date -->
             <div class="form-field-wrapper">
-                <mat-form-field class="w-full modern-field">
-                    <mat-label>
-                        <mat-icon class="field-icon">percent</mat-icon>
-                        Coverage Percentage
-                    </mat-label>
-                    <input matInput type="number" formControlName="coveragePercentage" placeholder="e.g., 80" min="0"
-                        max="100" required class="text-lg">
-                    <span matTextSuffix class="text-gray-500 mr-2">%</span>
-                    <mat-hint>Coverage percentage (0-100)</mat-hint>
-                    <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('required')">
-                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                        Coverage percentage is required
+              <mat-form-field class="w-full modern-field">
+                <mat-label>
+                  <mat-icon class="field-icon">event</mat-icon>
+                  Valid To
+                </mat-label>
+                <input matInput [matDatepicker]="pickerTo" formControlName="validTo" required
+                  placeholder="End date" class="text-lg" [min]="policyForm.get('validFrom')?.value"
+                  (click)="pickerTo.open()" readonly>
+                  <mat-datepicker-toggle matIconSuffix [for]="pickerTo">
+                    <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+                  </mat-datepicker-toggle>
+                  <mat-datepicker #pickerTo></mat-datepicker>
+                  @if (policyForm.get('validTo')?.hasError('required')) {
+                    <mat-error>
+                      <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                      Policy 'Valid To' date is required
                     </mat-error>
-                    <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('min')">
-                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                        Coverage must be 0% or higher
-                    </mat-error>
-                    <mat-error *ngIf="policyForm.get('coveragePercentage')?.hasError('max')">
-                        <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                        Coverage cannot exceed 100%
-                    </mat-error>
+                  }
                 </mat-form-field>
-            </div>
-
-            <!-- Date Range -->
-            <div class="grid grid-cols-2 gap-4">
-                <!-- Valid From Date -->
-                <div class="form-field-wrapper">
-                    <mat-form-field class="w-full modern-field">
-                        <mat-label>
-                            <mat-icon class="field-icon">event</mat-icon>
-                            Valid From
-                        </mat-label>
-                        <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required
-                            placeholder="Start date" class="text-lg" (click)="pickerFrom.open()" readonly>
-                        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom">
-                            <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
-                        </mat-datepicker-toggle>
-                        <mat-datepicker #pickerFrom></mat-datepicker>
-                        <mat-error *ngIf="policyForm.get('validFrom')?.hasError('required')">
-                            <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                            Policy 'Valid From' date is required
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-
-                <!-- Valid To Date -->
-                <div class="form-field-wrapper">
-                    <mat-form-field class="w-full modern-field">
-                        <mat-label>
-                            <mat-icon class="field-icon">event</mat-icon>
-                            Valid To
-                        </mat-label>
-                        <input matInput [matDatepicker]="pickerTo" formControlName="validTo" required
-                            placeholder="End date" class="text-lg" [min]="policyForm.get('validFrom')?.value"
-                            (click)="pickerTo.open()" readonly>
-                        <mat-datepicker-toggle matIconSuffix [for]="pickerTo">
-                            <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
-                        </mat-datepicker-toggle>
-                        <mat-datepicker #pickerTo></mat-datepicker>
-                        <mat-error *ngIf="policyForm.get('validTo')?.hasError('required')">
-                            <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
-                            Policy 'Valid To' date is required
-                        </mat-error>
-                    </mat-form-field>
-                </div>
+              </div>
             </div>
 
             <!-- Policy Status Badge -->
-            <div *ngIf="isEditMode" class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            @if (isEditMode) {
+              <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
                 <div class="flex items-center">
-                    <mat-icon class="text-blue-600 mr-2">info</mat-icon>
-                    <span class="text-sm text-blue-800">
-                        Policy status will be automatically updated based on validity dates
-                    </span>
+                  <mat-icon class="text-blue-600 mr-2">info</mat-icon>
+                  <span class="text-sm text-blue-800">
+                    Policy status will be automatically updated based on validity dates
+                  </span>
                 </div>
-            </div>
+              </div>
+            }
 
-        </form>
-    </mat-dialog-content>
+          </form>
+        </mat-dialog-content>
 
-    <!-- Modern Action Buttons -->
-    <mat-dialog-actions class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-        <button mat-stroked-button (click)="onCancel()"
+        <!-- Modern Action Buttons -->
+        <mat-dialog-actions class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <button mat-stroked-button (click)="onCancel()"
             class="px-8 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
             <mat-icon class="mr-2">close</mat-icon>
             Cancel
-        </button>
-        <button mat-raised-button (click)="onSubmit()" [disabled]="policyForm.invalid || isLoading"
+          </button>
+          <button mat-raised-button (click)="onSubmit()" [disabled]="policyForm.invalid || isLoading"
             class="px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
             <div class="flex items-center justify-center space-x-2">
-                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block"></mat-spinner>
-                <mat-icon *ngIf="!isLoading" class="mr-2">{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
-                <span>{{ isLoading ? 'Processing...' : (isEditMode ? 'Update Policy' : 'Create Policy') }}</span>
+              @if (isLoading) {
+                <mat-spinner diameter="20" class="inline-block"></mat-spinner>
+              }
+              @if (!isLoading) {
+                <mat-icon class="mr-2">{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+              }
+              <span>{{ isLoading ? 'Processing...' : (isEditMode ? 'Update Policy' : 'Create Policy') }}</span>
             </div>
-        </button>
-    </mat-dialog-actions>
-</div>
+          </button>
+        </mat-dialog-actions>
+      </div>

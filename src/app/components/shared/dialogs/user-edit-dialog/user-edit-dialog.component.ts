@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-user-edit-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule, MatDialogModule],
+  imports: [ReactiveFormsModule, MaterialModule, MatDialogModule],
   templateUrl: './user-edit-dialog.component.html',
   styleUrl: './user-edit-dialog.component.scss'
 })

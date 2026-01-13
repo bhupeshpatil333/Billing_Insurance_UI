@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MaterialModule } from '../../shared/material.module';
@@ -22,7 +22,7 @@ interface Service {
 @Component({
   selector: 'app-bill-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, MaterialModule, FormsModule],
+  imports: [RouterModule, MaterialModule, FormsModule],
   templateUrl: './bill-list.component.html',
   styleUrl: './bill-list.component.scss'
 })
