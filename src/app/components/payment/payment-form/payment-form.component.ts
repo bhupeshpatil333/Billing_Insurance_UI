@@ -20,6 +20,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
 
   paymentForm: FormGroup;
   bills: any[] = [];
+  isLoading = false;
   paymentMethods = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Banking'];
 
   constructor(
@@ -87,13 +88,14 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
         paymentMode: this.paymentForm.value.paymentMethod as 'Cash' | 'UPI' | 'Card'
       };
 
+      this.isLoading = true;
       this.paymentService.recordPayment(paymentData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             console.log('Payment processed successfully:', response);
-
-            // Show success toast with status
+            this.isLoading = false;
+            // ... (rest of success logic)
             if (response.status === 'Paid') {
               this.toastr.success(`Bill fully paid! Amount: ₹${paymentData.paidAmount}`, 'Payment Successful', {
                 timeOut: 4000
@@ -115,6 +117,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
             this.ngOnInit();
           },
           error: (error) => {
+            this.isLoading = false;
             console.error('Error processing payment:', error);
             const errorMessage = error.error?.message || error.message || 'Payment processing failed';
             this.toastr.error(errorMessage, 'Payment Failed', {

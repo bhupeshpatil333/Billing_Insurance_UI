@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
-import { Policy } from '../../../../core/services/insurance.service';
+import { InsuranceService, Policy } from '../../../../core/services/insurance.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 export interface CreatePolicyRequest {
     policyNumber: string;
@@ -22,11 +23,14 @@ export interface CreatePolicyRequest {
 export class PolicyCreateDialogComponent implements OnInit {
     policyForm: FormGroup;
     isEditMode: boolean = false;
+    isLoading: boolean = false;
 
     constructor(
         private fb: FormBuilder,
         private dialogRef: MatDialogRef<PolicyCreateDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: Policy | null
+        @Inject(MAT_DIALOG_DATA) public data: Policy | null,
+        private insuranceService: InsuranceService,
+        private notificationService: NotificationService
     ) {
         this.isEditMode = !!data;
 
@@ -45,8 +49,6 @@ export class PolicyCreateDialogComponent implements OnInit {
     onSubmit(): void {
         if (this.policyForm.valid) {
             const formValue = this.policyForm.value;
-
-            // Format dates to ISO string
             const policyData: CreatePolicyRequest = {
                 policyNumber: formValue.policyNumber,
                 coveragePercentage: formValue.coveragePercentage,
@@ -54,7 +56,20 @@ export class PolicyCreateDialogComponent implements OnInit {
                 validTo: new Date(formValue.validTo).toISOString()
             };
 
-            this.dialogRef.close(policyData);
+            this.isLoading = true;
+            this.insuranceService.createPolicy(policyData)
+                .subscribe({
+                    next: (policy) => {
+                        this.isLoading = false;
+                        this.notificationService.success('Insurance policy created successfully!', 'Policy Created');
+                        this.dialogRef.close(policy);
+                    },
+                    error: (error) => {
+                        this.isLoading = false;
+                        console.error('Error creating policy:', error);
+                        this.notificationService.error('Error creating policy: ' + error.message);
+                    }
+                });
         }
     }
 

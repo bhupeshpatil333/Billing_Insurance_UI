@@ -4,17 +4,19 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MaterialModule } from '../../components/shared/material.module';
 import { ConfirmDialogComponent } from '../../components/shared/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent],
+  imports: [CommonModule, RouterModule, SidebarComponent, MaterialModule],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent implements OnInit {
   userRole: string | null = null;
+  isLoggingOut: boolean = false;
 
   constructor(
     public authService: AuthService,
@@ -41,8 +43,12 @@ export class MainLayoutComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.authService.logout();
-        this.router.navigate(['/login']);
+        this.isLoggingOut = true;
+        setTimeout(() => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+          this.isLoggingOut = false;
+        }, 1000); // Small delay for visual feedback
       }
     });
   }

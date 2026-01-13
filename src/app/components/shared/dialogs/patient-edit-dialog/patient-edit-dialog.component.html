@@ -81,7 +81,7 @@
         <button mat-raised-button (click)="onSave()" [disabled]="patientForm.invalid"
             class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
             <mat-icon class="mr-2">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-            {{ isEditMode ? 'Save Changes' : 'Add Patient' }}
+            {{ isEditMode ? 'Edit Patient' : 'Add Patient' }}
         </button>
     </mat-dialog-actions>
 </div>

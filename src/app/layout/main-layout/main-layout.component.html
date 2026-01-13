@@ -34,10 +34,11 @@
                         </div>
                     </div>
                     <!-- Logout Button -->
-                    <button (click)="logout()"
-                        class="ml-4 flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-md hover:shadow-lg">
-                        <span class="text-lg">🚪</span>
-                        <span class="font-medium">Logout</span>
+                    <button (click)="logout()" [disabled]="isLoggingOut"
+                        class="ml-4 flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50">
+                        <mat-spinner *ngIf="isLoggingOut" diameter="20" class="inline-block"></mat-spinner>
+                        <span *ngIf="!isLoggingOut" class="text-lg">🚪</span>
+                        <span class="font-medium">{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
                     </button>
                 </div>
             </div>

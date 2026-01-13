@@ -29,9 +29,11 @@
 
             <button mat-raised-button (click)="loadReports()" [disabled]="isLoading"
                 class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-6 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl">
-                <mat-icon *ngIf="!isLoading">assessment</mat-icon>
-                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block mr-2"></mat-spinner>
-                {{ isLoading ? 'Loading...' : 'Generate Report' }}
+                <div class="flex items-center justify-center space-x-2">
+                    <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block"></mat-spinner>
+                    <mat-icon *ngIf="!isLoading">assessment</mat-icon>
+                    <span>{{ isLoading ? 'Loading...' : 'Generate Report' }}</span>
+                </div>
             </button>
         </div>
     </div>

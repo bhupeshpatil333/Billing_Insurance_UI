@@ -5,88 +5,93 @@
         <p class="text-gray-600">Record a payment for a bill</p>
     </div>
 
-    <!-- Form Card -->
-    <div class="bg-white rounded-xl shadow-lg p-8 max-w-2xl">
-        <form [formGroup]="paymentForm" (ngSubmit)="makePayment()" class="space-y-6">
+    <!-- Centered Container for Form and Summary -->
+    <div class="max-w-2xl mx-auto space-y-6">
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form [formGroup]="paymentForm" (ngSubmit)="makePayment()" class="space-y-6">
+                <!-- Bill Selection -->
+                <mat-form-field class="w-full">
+                    <mat-label>Select Bill</mat-label>
+                    <mat-select formControlName="billId" required>
+                        <mat-option *ngFor="let bill of bills" [value]="bill.billId">
+                            {{ bill.invoiceNumber }} | {{ bill.patientName }} | Remaining: ₹{{ bill.remainingAmount ||
+                            bill.netPayable }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>description</mat-icon>
+                    <mat-error *ngIf="paymentForm.get('billId')?.hasError('required')">
+                        Please select a bill to process payment
+                    </mat-error>
+                </mat-form-field>
 
-            <!-- Bill Selection -->
-            <mat-form-field class="w-full">
-                <mat-label>Select Bill</mat-label>
-                <mat-select formControlName="billId" required>
-                    <mat-option *ngFor="let bill of bills" [value]="bill.billId">
-                        {{ bill.invoiceNumber }} | {{ bill.patientName }} | Remaining: ₹{{ bill.remainingAmount ||
-                        bill.netPayable }}
-                    </mat-option>
-                </mat-select>
-                <mat-icon matPrefix>description</mat-icon>
-                <mat-error *ngIf="paymentForm.get('billId')?.hasError('required')">
-                    Please select a bill to process payment
-                </mat-error>
-            </mat-form-field>
+                <!-- Amount Field -->
+                <mat-form-field class="w-full">
+                    <mat-label>Payment Amount</mat-label>
+                    <input matInput type="number" formControlName="amount" placeholder="0.00" required>
+                    <span matTextPrefix class="mr-1">₹</span>
+                    <mat-icon matSuffix>payments</mat-icon>
+                    <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
+                        Payment amount is required
+                    </mat-error>
+                    <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
+                        Amount must be greater than zero
+                    </mat-error>
+                </mat-form-field>
 
-            <!-- Amount Field -->
-            <mat-form-field class="w-full">
-                <mat-label>Payment Amount</mat-label>
-                <input matInput type="number" formControlName="amount" placeholder="0.00" required>
-                <span matTextPrefix class="mr-1">₹</span>
-                <mat-icon matSuffix>payments</mat-icon>
-                <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
-                    Payment amount is required
-                </mat-error>
-                <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
-                    Amount must be greater than zero
-                </mat-error>
-            </mat-form-field>
-
-            <!-- Payment Method Selection -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-3 ml-1">
-                    <mat-icon class="text-xs align-middle mr-1">credit_card</mat-icon>
-                    Payment Method
-                </label>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <label *ngFor="let method of paymentMethods"
-                        class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-all"
-                        [class.border-indigo-500]="paymentForm.get('paymentMethod')?.value === method"
-                        [class.bg-indigo-50]="paymentForm.get('paymentMethod')?.value === method">
-                        <input type="radio" [value]="method" formControlName="paymentMethod" class="sr-only">
-                        <span class="text-center font-medium text-gray-700">{{ method }}</span>
-                        <span *ngIf="paymentForm.get('paymentMethod')?.value === method"
-                            class="absolute top-2 right-2 text-indigo-600">✓</span>
+                <!-- Payment Method Selection -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3 ml-1">
+                        <mat-icon class="text-xs align-middle mr-1">credit_card</mat-icon>
+                        Payment Method
                     </label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <label *ngFor="let method of paymentMethods"
+                            class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-all"
+                            [class.border-indigo-500]="paymentForm.get('paymentMethod')?.value === method"
+                            [class.bg-indigo-50]="paymentForm.get('paymentMethod')?.value === method">
+                            <input type="radio" [value]="method" formControlName="paymentMethod" class="sr-only">
+                            <span class="text-center font-medium text-gray-700">{{ method }}</span>
+                            <span *ngIf="paymentForm.get('paymentMethod')?.value === method"
+                                class="absolute top-2 right-2 text-indigo-600">✓</span>
+                        </label>
+                    </div>
+                    <div *ngIf="paymentForm.get('paymentMethod')?.invalid && paymentForm.get('paymentMethod')?.touched"
+                        class="mt-2 text-red-500 text-xs flex items-center">
+                        <mat-icon class="text-xs mr-1">error</mat-icon>
+                        Please select a payment method
+                    </div>
                 </div>
-                <div *ngIf="paymentForm.get('paymentMethod')?.invalid && paymentForm.get('paymentMethod')?.touched"
-                    class="mt-2 text-red-500 text-xs flex items-center">
-                    <mat-icon class="text-xs mr-1">error</mat-icon>
-                    Please select a payment method
+
+                <!-- Submit Button -->
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit" [disabled]="paymentForm.invalid || isLoading"
+                        class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
+                        <div class="flex items-center justify-center space-x-2">
+                            <mat-spinner *ngIf="isLoading" diameter="24" class="inline-block"></mat-spinner>
+                            <span *ngIf="!isLoading" class="mr-2">✓</span>
+                            <span>{{ isLoading ? 'Processing...' : 'Process Payment' }}</span>
+                        </div>
+                    </button>
+                    <button type="button"
+                        class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <!-- Submit Button -->
-            <div class="flex space-x-4 pt-4">
-                <button type="submit" [disabled]="paymentForm.invalid"
-                    class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
-                    <span class="mr-2">✓</span>
-                    Process Payment
-                </button>
-                <button type="button"
-                    class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                    Cancel
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Payment Summary -->
-    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded-lg">
-        <div class="flex items-start">
-            <span class="text-3xl mr-4">💵</span>
-            <div>
-                <h3 class="text-lg font-semibold text-green-900 mb-2">Payment Processing</h3>
-                <p class="text-green-800 text-sm">
-                    All payments are processed securely. A receipt will be generated automatically upon successful
-                    payment.
-                </p>
+        <!-- Payment Summary -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded-lg shadow-sm">
+            <div class="flex items-start">
+                <span class="text-3xl mr-4">💵</span>
+                <div>
+                    <h3 class="text-lg font-semibold text-green-900 mb-2">Payment Processing</h3>
+                    <p class="text-green-800 text-sm">
+                        All payments are processed securely. A receipt will be generated automatically upon successful
+                        payment.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

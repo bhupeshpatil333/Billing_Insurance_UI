@@ -50,28 +50,11 @@ export class InsuranceFormComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.createPolicy(result);
+        this.loadData(); // Refresh the policies list
       }
     });
   }
 
-  createPolicy(policyData: any): void {
-    this.isLoading = true;
-    this.insuranceService.createPolicy(policyData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (policy) => {
-          console.log('Policy created successfully:', policy);
-          this.notificationService.success('Insurance policy created successfully!', 'Policy Created');
-          this.loadData(); // Refresh the policies list
-        },
-        error: (error) => {
-          console.error('Error creating policy:', error);
-          this.notificationService.error('Error creating policy: ' + error.message);
-          this.isLoading = false;
-        }
-      });
-  }
 
   loadData(): void {
     this.isLoading = true;

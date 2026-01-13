@@ -123,10 +123,13 @@
             <mat-icon class="mr-2">close</mat-icon>
             Cancel
         </button>
-        <button mat-raised-button (click)="onSubmit()" [disabled]="policyForm.invalid"
+        <button mat-raised-button (click)="onSubmit()" [disabled]="policyForm.invalid || isLoading"
             class="px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-            <mat-icon class="mr-2">{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
-            {{ isEditMode ? 'Update Policy' : 'Create Policy' }}
+            <div class="flex items-center justify-center space-x-2">
+                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block"></mat-spinner>
+                <mat-icon *ngIf="!isLoading" class="mr-2">{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+                <span>{{ isLoading ? 'Processing...' : (isEditMode ? 'Update Policy' : 'Create Policy') }}</span>
+            </div>
         </button>
     </mat-dialog-actions>
 </div>

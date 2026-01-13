@@ -92,10 +92,12 @@
             </button>
             <button mat-raised-button color="primary" (click)="assignPolicy()"
                 [disabled]="!assignPolicyForm.valid || isLoading"
-                class="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
-                <mat-icon *ngIf="!isLoading">assignment_turned_in</mat-icon>
-                <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block mr-2"></mat-spinner>
-                {{ isLoading ? 'Assigning...' : 'Assign Policy' }}
+                class="bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 min-w-[160px]">
+                <div class="flex items-center justify-center space-x-2">
+                    <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block"></mat-spinner>
+                    <mat-icon *ngIf="!isLoading">assignment_turned_in</mat-icon>
+                    <span>{{ isLoading ? 'Assigning...' : 'Assign Policy' }}</span>
+                </div>
             </button>
         </mat-card-actions>
     </mat-card>

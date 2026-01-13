@@ -57,18 +57,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.userService.createUser(result)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.toastr.success('User created successfully', 'Success');
-              this.loadUsers();
-            },
-            error: (error) => {
-              console.error('Error creating user:', error);
-              this.toastr.error(error.error?.message || 'Failed to create user', 'Error');
-            }
-          });
+        this.loadUsers();
       }
     });
   }
@@ -80,19 +69,8 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.role !== user.role) {
-        this.userService.updateUserRole(user.userId, result.role)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.toastr.success('User role updated successfully', 'Success');
-              this.loadUsers();
-            },
-            error: (error) => {
-              console.error('Error updating user role:', error);
-              this.toastr.error(error.error?.message || 'Failed to update user role', 'Error');
-            }
-          });
+      if (result) {
+        this.loadUsers();
       }
     });
   }

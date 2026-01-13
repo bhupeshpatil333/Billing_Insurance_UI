@@ -18,6 +18,7 @@ export class BillFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   patientId!: number;
+  isLoading: boolean = false;
   selectedServices: any[] = [];
   patients: any[] = [];
   services: any[] = [
@@ -69,6 +70,7 @@ export class BillFormComponent implements OnInit, OnDestroy {
       }))
     };
 
+    this.isLoading = true;
     this.billingService.generateBill(billData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -76,9 +78,11 @@ export class BillFormComponent implements OnInit, OnDestroy {
           console.log('Bill generated successfully:', bill);
           this.patientId = 0;
           this.services.forEach(s => s.selected = false);
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error generating bill:', error);
+          this.isLoading = false;
         }
       });
   }

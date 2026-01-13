@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
+import { UserService } from '../../../../core/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-user-create-dialog',
@@ -14,10 +16,13 @@ import { MaterialModule } from '../../material.module';
 export class UserCreateDialogComponent implements OnInit {
     userForm!: FormGroup;
     roles = ['Admin', 'Billing', 'Insurance'];
+    isLoading = false;
 
     constructor(
         private fb: FormBuilder,
-        public dialogRef: MatDialogRef<UserCreateDialogComponent>
+        public dialogRef: MatDialogRef<UserCreateDialogComponent>,
+        private userService: UserService,
+        private toastr: ToastrService
     ) { }
 
     ngOnInit(): void {
@@ -30,7 +35,19 @@ export class UserCreateDialogComponent implements OnInit {
 
     onSave(): void {
         if (this.userForm.valid) {
-            this.dialogRef.close(this.userForm.value);
+            this.isLoading = true;
+            this.userService.createUser(this.userForm.value)
+                .subscribe({
+                    next: (user) => {
+                        this.isLoading = false;
+                        this.dialogRef.close(user);
+                    },
+                    error: (error) => {
+                        this.isLoading = false;
+                        console.error('Error creating user:', error);
+                        this.toastr.error(error.error?.message || 'Failed to create user', 'Error');
+                    }
+                });
         }
     }
 
