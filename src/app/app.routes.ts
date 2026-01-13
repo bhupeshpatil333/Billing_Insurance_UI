@@ -27,10 +27,16 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
 
-      // Admin only route
+      // Admin only routes
       {
         path: 'users',
         component: UserListComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Admin'] }
+      },
+      {
+        path: 'services',
+        loadComponent: () => import('./components/admin/service-list/service-list.component').then(m => m.ServiceListComponent),
         canActivate: [roleGuard],
         data: { roles: ['Admin'] }
       },

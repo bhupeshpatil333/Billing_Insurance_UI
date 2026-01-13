@@ -10,6 +10,7 @@ import { PaymentService } from '../../../core/services/payment.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { ServiceService } from '../../../core/services/service.service';
 
 interface Service {
   serviceId?: string;
@@ -30,14 +31,12 @@ export class BillListComponent implements OnInit, OnDestroy {
 
   // Data
   patients: any[] = [];
-  services: Service[] = [
-    { serviceId: '1', serviceName: 'Consultation', cost: 500, quantity: 0 },
-    { serviceId: '2', serviceName: 'X-Ray', cost: 1000, quantity: 0 },
-  ];
+  services: any[] = [];
 
   // Form data
   patientId: string = '';
   insuranceCoverage: number = 0;
+  isServicesLoading: boolean = false;
 
   // Calculations
   grossAmount: number = 0;
@@ -56,11 +55,13 @@ export class BillListComponent implements OnInit, OnDestroy {
     private billingService: BillingService,
     private insuranceService: InsuranceService,
     private paymentService: PaymentService,
+    private serviceService: ServiceService,
     private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
     this.loadPatients();
+    this.loadServices();
   }
 
   loadPatients(): void {
@@ -73,6 +74,26 @@ export class BillListComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error fetching patients:', error);
           this.toastr.error('Failed to load patients.', 'Error');
+        }
+      });
+  }
+
+  loadServices(): void {
+    this.isServicesLoading = true;
+    this.serviceService.getServices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          // Only show services that are active
+          this.services = res
+            .filter(s => s.isActive)
+            .map(s => ({ ...s, quantity: 0 }));
+          this.isServicesLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching services:', error);
+          this.toastr.error('Failed to load services from master.', 'Error');
+          this.isServicesLoading = false;
         }
       });
   }
@@ -143,6 +164,14 @@ export class BillListComponent implements OnInit, OnDestroy {
           this.netPayable = res.netPayable; // Update net payable from backend response
           this.insuranceAmount = res.insuranceAmount;
           this.grossAmount = res.grossAmount;
+
+          // Calculate or update insurance coverage percentage
+          if (res.insurancePercentage !== undefined) {
+            this.insuranceCoverage = res.insurancePercentage;
+          } else if (this.grossAmount > 0) {
+            this.insuranceCoverage = Math.round((this.insuranceAmount / this.grossAmount) * 100);
+          }
+
           this.toastr.success('Bill generated successfully!', 'Success');
         },
         error: (error) => {

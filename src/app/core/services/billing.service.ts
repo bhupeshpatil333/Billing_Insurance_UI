@@ -18,6 +18,7 @@ export interface BillResponse {
   netPayable: number;
   invoiceNumber: string;
   status?: string;
+  insurancePercentage?: number;
   createdAt: string;
 }
 

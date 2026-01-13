@@ -39,6 +39,15 @@
                 </a>
             </li>
 
+            <!-- Service Management - Admin Only -->
+            <li *ngIf="auth.isAdmin()">
+                <a routerLink="/services" routerLinkActive="bg-indigo-800 shadow-lg scale-105"
+                    class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-indigo-500 transition-all duration-200 cursor-pointer group">
+                    <span class="text-2xl group-hover:scale-110 transition-transform">🛠️</span>
+                    <span *ngIf="isSidebarOpen" class="font-medium">Service Master</span>
+                </a>
+            </li>
+
             <!-- Patients - All Users -->
             <li>
                 <a routerLink="/patients" routerLinkActive="bg-indigo-800 shadow-lg scale-105"
