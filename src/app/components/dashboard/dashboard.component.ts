@@ -25,6 +25,7 @@ interface DashboardStats {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  isLoading = false;
 
   stats: DashboardStats = {
     patients: 0,
@@ -41,6 +42,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     const isAdmin = this.auth.isAdmin();
     const isBilling = this.auth.isBilling();
     const isInsurance = this.auth.isInsurance();
@@ -75,9 +77,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (stats) => {
           this.stats = stats;
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading dashboard stats:', error);
+          this.isLoading = false;
         }
       });
   }

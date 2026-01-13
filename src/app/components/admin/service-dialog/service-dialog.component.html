@@ -13,14 +13,14 @@
         <input matInput formControlName="serviceName" placeholder="e.g. Master Health Checkup" required>
         <mat-icon matPrefix class="mr-2">medical_services</mat-icon>
         @if (serviceForm.get('serviceName')?.hasError('required')) {
-          <mat-error>
-            Service name is required
-          </mat-error>
+        <mat-error>
+          Service name is required
+        </mat-error>
         }
         @if (serviceForm.get('serviceName')?.hasError('minlength')) {
-          <mat-error>
-            Minimum 3 characters required
-          </mat-error>
+        <mat-error>
+          Minimum 3 characters required
+        </mat-error>
         }
       </mat-form-field>
 
@@ -30,36 +30,35 @@
         <input matInput type="number" formControlName="cost" placeholder="0.00" required>
         <mat-icon matPrefix class="mr-2">payments</mat-icon>
         @if (serviceForm.get('cost')?.hasError('required')) {
-          <mat-error>
-            Cost is required
-          </mat-error>
+        <mat-error>
+          Cost is required
+        </mat-error>
         }
         @if (serviceForm.get('cost')?.hasError('min')) {
-          <mat-error>
-            Cost cannot be negative
-          </mat-error>
+        <mat-error>
+          Cost cannot be negative
+        </mat-error>
         }
       </mat-form-field>
 
       <!-- Status (Only in Edit Mode) -->
       @if (isEditMode) {
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Service Status</mat-label>
-          <mat-select formControlName="isActive">
-            <mat-option [value]="true">Active</mat-option>
-            <mat-option [value]="false">Inactive</mat-option>
-          </mat-select>
-          <mat-icon matPrefix class="mr-2 border-none">
-            {{ serviceForm.get('isActive')?.value ? 'check_circle' : 'cancel' }}
-          </mat-icon>
-        </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Service Status</mat-label>
+        <mat-select formControlName="isActive">
+          <mat-option [value]="true">Active</mat-option>
+          <mat-option [value]="false">Inactive</mat-option>
+        </mat-select>
+        <mat-icon matPrefix class="mr-2 border-none">
+          {{ serviceForm.get('isActive')?.value ? 'check_circle' : 'cancel' }}
+        </mat-icon>
+      </mat-form-field>
       }
 
-      <div
-        class="bg-blue-50 p-4 rounded-lg flex items-start space-x-3 text-blue-700 text-sm border border-blue-100">
+      <div class="bg-blue-50 p-4 rounded-lg flex items-start space-x-3 text-blue-700 text-sm border border-blue-100">
         <mat-icon class="mt-1">info</mat-icon>
         <p>This cost will be the base price used in all future bill calculations. Backend recalculations will
-        use this value.</p>
+          use this value.</p>
       </div>
     </form>
   </mat-dialog-content>
@@ -72,7 +71,7 @@
       class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-2 rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all font-bold">
       <div class="flex items-center space-x-2">
         @if (isLoading) {
-          <mat-spinner diameter="20" class="inline-block"></mat-spinner>
+        <mat-spinner diameter="20" class="inline-block"></mat-spinner>
         }
         <span>{{ isEditMode ? 'Update Service' : 'Create Service' }}</span>
       </div>
