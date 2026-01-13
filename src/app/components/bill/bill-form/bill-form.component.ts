@@ -5,7 +5,9 @@ import { MaterialModule } from '../../shared/material.module';
 import { BillingService } from '../../../core/services/billing.service';
 import { PatientService } from '../../../core/services/patient.service';
 import { Subject } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { ServiceService, ServiceItem } from '../../../core/services/service.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-bill-form',
@@ -17,70 +19,80 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 export class BillFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  patientId: string = '';
-  selectedServices: any[] = [];
+  patientId!: number;
+  isLoading: boolean = false;
   patients: any[] = [];
-  services: any[] = [
-    { serviceName: 'Consultation', cost: 500, selected: false },
-    { serviceName: 'X-Ray', cost: 1000, selected: false },
-    { serviceName: 'Blood Test', cost: 800, selected: false },
-    { serviceName: 'ECG', cost: 600, selected: false },
-    { serviceName: 'MRI Scan', cost: 5000, selected: false },
-    { serviceName: 'CT Scan', cost: 4000, selected: false },
-    { serviceName: 'Ultrasound', cost: 1200, selected: false }
-  ];
+  services: (ServiceItem & { quantity: number })[] = [];
 
   constructor(
     private billingService: BillingService,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private serviceService: ServiceService,
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
+    this.loadInitialData();
+  }
+
+  loadInitialData(): void {
     this.patientService.getPatients()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
+        next: (res) => this.patients = res,
+        error: (error) => console.error('Error fetching patients:', error)
+      });
+
+    this.serviceService.getServices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
         next: (res) => {
-          this.patients = res;
+          this.services = res.map(s => ({ ...s, quantity: 0 }));
         },
-        error: (error) => {
-          console.error('Error fetching patients:', error);
-        }
+        error: (error) => this.notification.error('Error fetching services: ' + error.message)
       });
   }
 
   calculateTotal(): number {
     return this.services
-      .filter(s => s.selected)
-      .reduce((sum, service) => sum + service.cost, 0);
+      .reduce((sum, service) => sum + (service.cost * service.quantity), 0);
+  }
+
+  updateQuantity(service: any, delta: number): void {
+    const newQty = (service.quantity || 0) + delta;
+    if (newQty >= 0) {
+      service.quantity = newQty;
+    }
   }
 
   generateBill(): void {
-    const selectedServices = this.services.filter(s => s.selected);
-    if (!this.patientId || selectedServices.length === 0) {
-      console.error('Please select patient and services');
+    const selectedItems = this.services.filter(s => s.quantity > 0);
+    if (!this.patientId || selectedItems.length === 0) {
+      this.notification.warning('Please select a patient and at least one service');
       return;
     }
 
-    const totalAmount = this.selectedServices.reduce((sum, service) => sum + service.cost, 0);
-
     const billData = {
-      patientId: this.patientId,
-      amount: totalAmount,
-      date: new Date(),
-      status: 'pending',
-      services: this.selectedServices
+      patientId: Number(this.patientId),
+      services: selectedItems.map(s => ({
+        serviceId: s.serviceId,
+        quantity: s.quantity
+      }))
     };
 
+    this.isLoading = true;
     this.billingService.generateBill(billData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (bill) => {
-          console.log('Bill generated successfully:', bill);
-          this.patientId = '';
-          this.selectedServices = [];
+          this.notification.success(`Bill generated successfully! Invoice: ${bill.invoiceNumber}`);
+          this.patientId = 0;
+          this.services.forEach(s => s.quantity = 0);
+          this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error generating bill:', error);
+          this.notification.error(error.message || 'Error generating bill');
+          this.isLoading = false;
         }
       });
   }

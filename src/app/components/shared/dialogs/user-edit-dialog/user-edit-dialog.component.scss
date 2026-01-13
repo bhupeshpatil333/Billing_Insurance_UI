@@ -1,0 +1,50 @@
+.user-edit-dialog {
+    min-width: 500px;
+    max-width: 600px;
+    overflow-x: hidden;
+
+    .modern-field {
+        .mat-mdc-form-field-focus-overlay {
+            background-color: rgba(217, 119, 6, 0.05);
+        }
+
+        .field-icon {
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+            color: #d97706;
+        }
+
+        .error-icon {
+            font-size: 16px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        &.readonly-field {
+            .mat-mdc-text-field-wrapper {
+                background-color: #f9fafb;
+            }
+        }
+    }
+
+    .form-field-wrapper {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    mat-dialog-actions button {
+        min-width: 120px;
+    }
+}

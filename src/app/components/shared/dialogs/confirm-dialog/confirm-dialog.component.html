@@ -1,0 +1,28 @@
+<div class="confirm-dialog">
+    <!-- Icon Circle -->
+    <div class="icon-container" [style.background-color]="dialogConfig.iconBgColor">
+        <mat-icon class="dialog-icon" [style.color]="dialogConfig.iconColor">
+            {{ dialogConfig.icon }}
+        </mat-icon>
+    </div>
+
+    <!-- Title -->
+    <h2 mat-dialog-title>
+        {{ data.title }}
+    </h2>
+
+    <!-- Message -->
+    <mat-dialog-content>
+        <p>{{ data.message }}</p>
+    </mat-dialog-content>
+
+    <!-- Action Buttons -->
+    <mat-dialog-actions class="flex justify-center gap-4">
+        <button mat-button (click)="onCancel()" class="cancel-btn">
+            {{ data.cancelText }}
+        </button>
+        <button mat-raised-button (click)="onConfirm()" [class]="'confirm-btn ' + dialogConfig.confirmButtonColor">
+            {{ data.confirmText }}
+        </button>
+    </mat-dialog-actions>
+</div>

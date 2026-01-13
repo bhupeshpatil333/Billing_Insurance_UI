@@ -11,6 +11,7 @@ import { BillFormComponent } from './components/bill/bill-form/bill-form.compone
 import { BillListComponent } from './components/bill/bill-list/bill-list.component';
 import { PaymentFormComponent } from './components/payment/payment-form/payment-form.component';
 import { UserListComponent } from './components/user/user-list/user-list.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 export const routes: Routes = [
   // Public routes
@@ -26,10 +27,16 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
 
-      // Admin only route
+      // Admin only routes
       {
         path: 'users',
         component: UserListComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Admin'] }
+      },
+      {
+        path: 'services',
+        loadComponent: () => import('./components/admin/service-list/service-list.component').then(m => m.ServiceListComponent),
         canActivate: [roleGuard],
         data: { roles: ['Admin'] }
       },
@@ -42,7 +49,15 @@ export const routes: Routes = [
         path: 'insurance',
         component: InsuranceFormComponent,
         canActivate: [roleGuard],
-        data: { roles: ['Admin', 'InsuranceStaff'] }
+        data: { roles: ['Admin', 'Insurance'] }
+      },
+
+      // Policy Management - Admin and Insurance
+      {
+        path: 'policies',
+        loadComponent: () => import('./components/insurance/policy-list/policy-list.component').then(m => m.PolicyListComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['Admin', 'Insurance'] }
       },
 
       // Billing staff and admin
@@ -50,19 +65,26 @@ export const routes: Routes = [
         path: 'billing',
         component: BillListComponent,
         canActivate: [roleGuard],
-        data: { roles: ['Admin', 'BillingStaff'] }
+        data: { roles: ['Admin', 'Billing'] }
       },
 
       { path: 'billing/:id', component: BillListComponent },
       { path: 'payments', component: PaymentFormComponent },
 
       // Reports - Admin only
+      // {
+      //   path: 'reports',
+      //   component: DashboardComponent, // Placeholder - create reports component later
+      //   canActivate: [roleGuard],
+      //   data: { roles: ['Admin'] }
+      // }
       {
         path: 'reports',
-        component: DashboardComponent, // Placeholder - create reports component later
-        canActivate: [roleGuard],
+        component: ReportsComponent,
+        canActivate: [authGuard, roleGuard],
         data: { roles: ['Admin'] }
       }
+
     ]
   },
 

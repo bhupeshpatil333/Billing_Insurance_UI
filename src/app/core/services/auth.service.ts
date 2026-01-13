@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
@@ -8,6 +9,12 @@ interface LoginResponse {
   token: string;
   role: string;
   user?: any;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
 @Injectable({
@@ -19,13 +26,22 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) { }
 
   login(data: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.api}/login`, data).pipe(
-      tap(response => {
-        if (response.token) {
-          this.saveToken(response.token, response.role);
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.api}/login`, data).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message || 'Login failed');
+        }
+        return response.data;
+      }),
+      tap(loginData => {
+        if (loginData.token) {
+          this.saveToken(loginData.token, loginData.role);
           this.isAuthenticatedSubject.next(true);
           console.log('Login successful');
         }
@@ -57,18 +73,19 @@ export class AuthService {
   }
 
   isBilling(): boolean {
-    return this.getRole() === 'BillingStaff';
+    return this.getRole() === 'Billing';
   }
 
   isInsurance(): boolean {
-    return this.getRole() === 'InsuranceStaff';
+    return this.getRole() === 'Insurance';
   }
 
 
   logout(): void {
     localStorage.clear();
     this.isAuthenticatedSubject.next(false);
-    console.log('User logged out');
+    this.router.navigate(['/login']);
+    console.log('User logged out and redirected');
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
@@ -78,8 +95,14 @@ export class AuthService {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      // Server-side error - check for standardized API response format
+      if (error.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error.error?.success === false) {
+        errorMessage = error.error.message || 'Request failed';
+      } else {
+        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      }
     }
 
     console.error('Auth Service Error:', errorMessage);

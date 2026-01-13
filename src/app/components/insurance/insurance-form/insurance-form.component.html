@@ -1,78 +1,137 @@
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Insurance Policy Assignment</h1>
-        <p class="text-gray-600">Assign insurance policies to patients</p>
+<div class="container mx-auto p-6">
+  <!-- Page Header with Add Policy Button -->
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">🏥 Insurance Policy Management</h1>
+      <p class="text-gray-600">Create policies and assign them to patients for automatic billing calculations</p>
     </div>
+    <button mat-raised-button (click)="openCreatePolicyDialog()"
+      class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+      <mat-icon>add_circle</mat-icon>
+      Create New Policy
+    </button>
+  </div>
 
-    <!-- Form Card -->
-    <div class="bg-white rounded-xl shadow-lg p-8 max-w-2xl">
-        <form [formGroup]="policyForm" (ngSubmit)="assign()" class="space-y-6">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  }
 
-            <!-- Patient Selection -->
-            <div>
-                <label for="patient" class="block text-sm font-semibold text-gray-700 mb-2">
-                    <span class="mr-2">👤</span>
-                    Select Patient
-                </label>
-                <select id="patient" formControlName="patientId"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-                    <option value="">Choose a patient...</option>
-                    <option *ngFor="let p of patients" [value]="p.patientId">
-                        {{ p.fullName }}
-                    </option>
-                </select>
-                <p *ngIf="policyForm.get('patientId')?.invalid && policyForm.get('patientId')?.touched"
-                    class="mt-1 text-red-500 text-xs">
-                    Please select a patient
+  <!-- Assignment Form -->
+  @if (!isLoading) {
+    <mat-card class="max-w-2xl mx-auto">
+      <mat-card-header class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-t-lg -m-4 mb-4">
+        <mat-card-title class="text-2xl font-bold">Assign Policy to Patient</mat-card-title>
+        <mat-card-subtitle class="text-white/90">Select a patient and policy to create an
+        assignment</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="p-6">
+        <form [formGroup]="assignPolicyForm" class="space-y-6">
+          <!-- Patient Selection -->
+          <mat-form-field class="w-full">
+            <mat-label>Select Patient</mat-label>
+            <mat-select formControlName="patientId" required>
+              @for (patient of patients; track patient) {
+                <mat-option [value]="patient.patientId">
+                  <div class="flex items-center justify-between">
+                    <span class="font-semibold">{{ patient.fullName }}</span>
+                    <span class="text-sm text-gray-500 ml-4">📱 {{ patient.mobile }}</span>
+                  </div>
+                </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-hint>Choose the patient to assign the policy to</mat-hint>
+            @if (assignPolicyForm.get('patientId')?.hasError('required')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                Please select a patient for assignment
+              </mat-error>
+            }
+          </mat-form-field>
+          <!-- Policy Selection -->
+          <mat-form-field class="w-full">
+            <mat-label>Select Insurance Policy</mat-label>
+            <mat-select formControlName="policyId" required>
+              @for (policy of policies; track policy) {
+                <mat-option [value]="policy.policyId">
+                  <div class="flex items-center justify-between">
+                    <span class="font-semibold">{{ policy.policyNumber }}</span>
+                    <span class="text-sm text-green-600 ml-4">
+                      💰 Coverage: ₹{{ policy.coverageAmount | number:'1.0-0' }}
+                      @if (policy.coveragePercentage) {
+                        <span> ({{ policy.coveragePercentage }}%)</span>
+                      }
+                    </span>
+                  </div>
+                </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>health_and_safety</mat-icon>
+            <mat-hint>Choose the insurance policy to assign</mat-hint>
+            @if (assignPolicyForm.get('policyId')?.hasError('required')) {
+              <mat-error>
+                <mat-icon class="text-xs align-middle mr-1">error</mat-icon>
+                Please select an insurance policy to assign
+              </mat-error>
+            }
+          </mat-form-field>
+          <!-- Info Box -->
+          <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <div class="flex items-start">
+              <mat-icon class="text-blue-500 mr-3">info</mat-icon>
+              <div>
+                <p class="font-semibold text-blue-800">Auto-Calculation Enabled</p>
+                <p class="text-sm text-blue-700 mt-1">
+                  Once assigned, the insurance coverage will be automatically applied when generating
+                  bills for this patient.
                 </p>
+              </div>
             </div>
-
-            <!-- Policy Selection -->
-            <div>
-                <label for="policy" class="block text-sm font-semibold text-gray-700 mb-2">
-                    <span class="mr-2">🏥</span>
-                    Select Policy
-                </label>
-                <select id="policy" formControlName="policyId"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-                    <option value="">Choose a policy...</option>
-                    <option *ngFor="let i of policies" [value]="i.policyId">
-                        {{ i.policyNumber }}
-                    </option>
-                </select>
-                <p *ngIf="policyForm.get('policyId')?.invalid && policyForm.get('policyId')?.touched"
-                    class="mt-1 text-red-500 text-xs">
-                    Please select a policy
-                </p>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="flex space-x-4 pt-4">
-                <button type="submit" [disabled]="policyForm.invalid"
-                    class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
-                    <span class="mr-2">✓</span>
-                    Assign Policy
-                </button>
-                <button type="button"
-                    class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                    Cancel
-                </button>
-            </div>
+          </div>
         </form>
-    </div>
+      </mat-card-content>
+      <mat-card-actions class="p-6 flex justify-end space-x-4">
+        <button mat-button (click)="assignPolicyForm.reset()" [disabled]="isLoading">
+          <mat-icon>clear</mat-icon>
+          Clear
+        </button>
+        <button mat-raised-button color="primary" (click)="assignPolicy()"
+          [disabled]="!assignPolicyForm.valid || isLoading"
+          class="bg-gradient-to-r from-purple-600 to-purple-700 text-white transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 min-w-[160px]">
+          <div class="flex items-center justify-center space-x-2">
+            @if (isLoading) {
+              <mat-spinner diameter="20" class="inline-block"></mat-spinner>
+            }
+            @if (!isLoading) {
+              <mat-icon>assignment_turned_in</mat-icon>
+            }
+            <span>{{ isLoading ? 'Assigning...' : 'Assign Policy' }}</span>
+          </div>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
 
-    <!-- Info Card -->
-    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
-        <div class="flex items-start">
-            <span class="text-3xl mr-4">ℹ️</span>
-            <div>
-                <h3 class="text-lg font-semibold text-blue-900 mb-2">Policy Assignment Information</h3>
-                <p class="text-blue-800 text-sm">
-                    Assigning a policy will link the selected insurance policy to the patient's account.
-                    This will be used for automatic coverage calculation during billing.
-                </p>
-            </div>
+  <!-- Summary Cards -->
+  @if (!isLoading) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-2xl mx-auto">
+      <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-lg font-bold">Total Patients</h3>
+          <mat-icon class="text-3xl opacity-80">people</mat-icon>
         </div>
+        <p class="text-4xl font-bold">{{ patients.length }}</p>
+      </div>
+      <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-lg font-bold">Available Policies</h3>
+          <mat-icon class="text-3xl opacity-80">policy</mat-icon>
+        </div>
+        <p class="text-4xl font-bold">{{ policies.length }}</p>
+      </div>
     </div>
+  }
 </div>

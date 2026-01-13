@@ -8,14 +8,15 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatNativeDateModule } from "@angular/material/core";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatListModule } from "@angular/material/list";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTooltipModule } from "@angular/material/tooltip";
-
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 @NgModule({
     exports: [
         MatInputModule,
@@ -27,13 +28,15 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         MatFormFieldModule,
         MatSelectModule,
         MatDatepickerModule,
-        MatNativeDateModule,
         MatSnackBarModule,
         MatPaginatorModule,
         MatDialogModule,
         MatListModule,
         MatSortModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatProgressBarModule,
+        MatProgressSpinnerModule,
+        MatSlideToggleModule
     ]
 })
 export class MaterialModule { }

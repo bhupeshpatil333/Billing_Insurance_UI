@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MaterialModule } from '../../shared/material.module';
@@ -9,6 +9,8 @@ import { InsuranceService } from '../../../core/services/insurance.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { ServiceService } from '../../../core/services/service.service';
 
 interface Service {
   serviceId?: string;
@@ -20,7 +22,7 @@ interface Service {
 @Component({
   selector: 'app-bill-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, MaterialModule, FormsModule],
+  imports: [RouterModule, MaterialModule, FormsModule],
   templateUrl: './bill-list.component.html',
   styleUrl: './bill-list.component.scss'
 })
@@ -29,19 +31,12 @@ export class BillListComponent implements OnInit, OnDestroy {
 
   // Data
   patients: any[] = [];
-  services: Service[] = [
-    { serviceName: 'Consultation', cost: 500, quantity: 0 },
-    { serviceName: 'X-Ray', cost: 1000, quantity: 0 },
-    { serviceName: 'Blood Test', cost: 800, quantity: 0 },
-    { serviceName: 'ECG', cost: 600, quantity: 0 },
-    { serviceName: 'MRI Scan', cost: 5000, quantity: 0 },
-    { serviceName: 'CT Scan', cost: 4000, quantity: 0 },
-    { serviceName: 'Ultrasound', cost: 1200, quantity: 0 }
-  ];
+  services: any[] = [];
 
   // Form data
   patientId: string = '';
   insuranceCoverage: number = 0;
+  isServicesLoading: boolean = false;
 
   // Calculations
   grossAmount: number = 0;
@@ -59,11 +54,14 @@ export class BillListComponent implements OnInit, OnDestroy {
     private patientService: PatientService,
     private billingService: BillingService,
     private insuranceService: InsuranceService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private serviceService: ServiceService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
     this.loadPatients();
+    this.loadServices();
   }
 
   loadPatients(): void {
@@ -75,6 +73,27 @@ export class BillListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching patients:', error);
+          this.toastr.error('Failed to load patients.', 'Error');
+        }
+      });
+  }
+
+  loadServices(): void {
+    this.isServicesLoading = true;
+    this.serviceService.getServices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          // Only show services that are active
+          this.services = res
+            .filter(s => s.isActive)
+            .map(s => ({ ...s, quantity: 0 }));
+          this.isServicesLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching services:', error);
+          this.toastr.error('Failed to load services from master.', 'Error');
+          this.isServicesLoading = false;
         }
       });
   }
@@ -101,6 +120,7 @@ export class BillListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching insurance:', error);
+          this.toastr.error('Failed to fetch insurance details.', 'Error');
           this.insuranceCoverage = 0;
           this.calculateBill();
         }
@@ -122,20 +142,16 @@ export class BillListComponent implements OnInit, OnDestroy {
 
   generateBill(): void {
     if (!this.patientId || this.grossAmount === 0) {
-      alert('Please select a patient and at least one service');
+      this.toastr.warning('Please select a patient and at least one service', 'Incomplete Information');
       return;
     }
 
     const selectedServices = this.services.filter(s => s.quantity > 0);
 
     const payload = {
-      patientId: this.patientId,
-      grossAmount: this.grossAmount,
-      insuranceAmount: this.insuranceAmount,
-      netPayable: this.netPayable,
+      patientId: parseInt(this.patientId, 10), // Ensure number
       services: selectedServices.map(s => ({
-        serviceName: s.serviceName,
-        cost: s.cost,
+        serviceId: parseInt(s.serviceId || '0', 10),
         quantity: s.quantity
       }))
     };
@@ -145,38 +161,88 @@ export class BillListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.billResult = res;
-          alert('Bill generated successfully!');
+          this.netPayable = res.netPayable; // Update net payable from backend response
+          this.insuranceAmount = res.insuranceAmount;
+          this.grossAmount = res.grossAmount;
+
+          // Calculate or update insurance coverage percentage
+          if (res.insurancePercentage !== undefined) {
+            this.insuranceCoverage = res.insurancePercentage;
+          } else if (this.grossAmount > 0) {
+            this.insuranceCoverage = Math.round((this.insuranceAmount / this.grossAmount) * 100);
+          }
+
+          this.toastr.success('Bill generated successfully!', 'Success');
         },
         error: (error) => {
           console.error('Error generating bill:', error);
-          alert('Error generating bill. Please try again.');
+          this.toastr.error('Error generating bill. Please try again.', 'Error');
         }
       });
   }
 
+  downloadInvoice() {
+    if (!this.billResult || !(this.billResult.id || this.billResult.billId)) {
+      this.toastr.warning('No bill generated to download invoice.', 'No Invoice');
+      return;
+    }
+    const billId = this.billResult.id || this.billResult.billId;
+    this.billingService.downloadInvoice(billId)
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Invoice_${billId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.toastr.success('Invoice downloaded successfully!', 'Download Complete');
+      }, error => {
+        console.error('Error downloading invoice:', error);
+        this.toastr.error('Failed to download invoice.', 'Error');
+      });
+  }
+
+  emailInvoice() {
+    if (!this.billResult || !(this.billResult.id || this.billResult.billId)) {
+      this.toastr.warning('No bill generated to email invoice.', 'No Invoice');
+      return;
+    }
+    const billId = this.billResult.id || this.billResult.billId;
+    this.billingService.emailInvoice(billId)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Invoice has been sent to the patient\'s registered email.', 'Email Sent');
+        },
+        error: (error) => {
+          console.error('Error emailing invoice:', error);
+          this.toastr.error('Failed to email invoice. Please try again.', 'Error');
+        }
+      });
+  }
+
+
   makePayment(): void {
     if (!this.billResult) {
-      alert('Please generate a bill first');
+      this.toastr.warning('Please generate a bill first', 'No Bill Generated');
       return;
     }
 
     const payload = {
-      billId: this.billResult.id || this.billResult.billId,
-      amount: this.netPayable,
-      paymentMethod: 'UPI',
-      date: new Date()
+      billId: this.billResult.billId,
+      paidAmount: this.netPayable,
+      paymentMode: 'UPI' as const
     };
 
-    this.paymentService.makePayment(payload)
+    this.paymentService.recordPayment(payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          alert('Payment Successful!');
+          this.toastr.success('Payment Successful!', 'Success');
           this.resetForm();
         },
         error: (error) => {
           console.error('Error processing payment:', error);
-          alert('Payment failed. Please try again.');
+          this.toastr.error('Payment failed. Please try again.', 'Error');
         }
       });
   }

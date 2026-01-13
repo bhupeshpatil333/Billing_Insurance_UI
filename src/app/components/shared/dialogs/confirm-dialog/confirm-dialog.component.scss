@@ -1,0 +1,210 @@
+.confirm-dialog {
+    max-width: 480px;
+    padding: 2.5rem 2rem 1.5rem;
+    overflow: hidden;
+    text-align: center;
+
+    .icon-container {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        animation: scaleIn 0.3s ease-out;
+    }
+
+    .dialog-icon {
+        font-size: 56px;
+        width: 56px;
+        height: 56px;
+    }
+
+    mat-dialog-title {
+        padding: 0;
+        margin: 0 0 1rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        animation: fadeInDown 0.4s ease-out;
+    }
+
+    mat-dialog-content {
+        padding: 0;
+        margin: 0 0 2rem 0;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease-out;
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+    }
+
+    mat-dialog-actions {
+        padding: 0;
+        margin: 0;
+        min-height: auto;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    // Cancel Button - Light Gray
+    .cancel-btn {
+        flex: 1;
+        min-width: 140px;
+        height: 52px !important;
+        padding: 0 24px !important;
+        background: #e5e7eb !important;
+        color: #374151 !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        text-transform: none !important;
+        box-shadow: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: #d1d5db !important;
+            transform: translateY(-1px);
+        }
+    }
+
+    // Confirm Button - Red with dynamic colors
+    .confirm-btn {
+        flex: 1;
+        min-width: 140px;
+        height: 52px !important;
+        padding: 0 24px !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        text-transform: none !important;
+        color: white !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease;
+
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        // Delete - Red
+        &.from-red-600 {
+            background: linear-gradient(to right, #dc2626, #b91c1c) !important;
+
+            &:hover {
+                background: linear-gradient(to right, #b91c1c, #991b1b) !important;
+            }
+        }
+
+        // Logout - Amber/Orange
+        &.from-amber-600 {
+            background: linear-gradient(to right, #d97706, #ea580c) !important;
+
+            &:hover {
+                background: linear-gradient(to right, #b45309, #c2410c) !important;
+            }
+        }
+
+        // Deactivate - Orange/Red
+        &.from-orange-600 {
+            background: linear-gradient(to right, #ea580c, #dc2626) !important;
+
+            &:hover {
+                background: linear-gradient(to right, #c2410c, #b91c1c) !important;
+            }
+        }
+
+        // Warning - Yellow
+        &.from-yellow-600 {
+            background: linear-gradient(to right, #ca8a04, #d97706) !important;
+
+            &:hover {
+                background: linear-gradient(to right, #a16207, #b45309) !important;
+            }
+        }
+
+        // Info - Blue
+        &.from-blue-600 {
+            background: linear-gradient(to right, #2563eb, #4f46e5) !important;
+
+            &:hover {
+                background: linear-gradient(to right, #1d4ed8, #4338ca) !important;
+            }
+        }
+    }
+
+    // Animations
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+// Global dialog overflow fix
+::ng-deep .cdk-overlay-pane {
+    .mat-mdc-dialog-container {
+        overflow: hidden !important;
+        border-radius: 24px !important;
+
+        .mdc-dialog__surface {
+            overflow: hidden !important;
+            border-radius: 24px !important;
+        }
+
+        .mat-mdc-dialog-content {
+            overflow: hidden !important;
+        }
+    }
+}

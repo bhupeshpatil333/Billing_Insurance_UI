@@ -1,0 +1,147 @@
+<div class="container mx-auto p-6">
+  <!-- Page Header -->
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 Insurance Policy Management</h1>
+      <p class="text-gray-600">Manage all insurance policies with search, filter, and expiration tracking</p>
+    </div>
+    <button mat-raised-button (click)="openCreateDialog()"
+      class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+      <mat-icon>add_circle</mat-icon>
+      Create New Policy
+    </button>
+  </div>
+
+  <!-- Search and Filter Bar -->
+  <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Search -->
+      <mat-form-field class="w-full">
+        <mat-label>Search Policies</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+          placeholder="Search by policy number...">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Filter -->
+      <mat-form-field class="w-full">
+        <mat-label>Filter by Status</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()">
+          <mat-option value="all">All Policies</mat-option>
+          <mat-option value="active">Active</mat-option>
+          <mat-option value="expiring">Expiring Soon (30 days)</mat-option>
+          <mat-option value="expired">Expired</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>filter_list</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+  <div class="flex justify-center items-center py-12">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  }
+
+  <!-- Policies Table -->
+  @if (!isLoading) {
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="filteredPolicies" class="w-full">
+        <!-- Policy Number Column -->
+        <ng-container matColumnDef="policyNumber">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Policy Number</th>
+          <td mat-cell *matCellDef="let policy" class="font-semibold">{{ policy.policyNumber }}</td>
+        </ng-container>
+        <!-- Coverage Percentage Column -->
+        <ng-container matColumnDef="coveragePercentage">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Coverage</th>
+          <td mat-cell *matCellDef="let policy">
+            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+              {{ policy.coveragePercentage }}%
+            </span>
+          </td>
+        </ng-container>
+        <!-- Valid From Column -->
+        <ng-container matColumnDef="validFrom">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Valid From</th>
+          <td mat-cell *matCellDef="let policy">{{ policy.validFrom | date:'dd-MMM-yyyy' }}</td>
+        </ng-container>
+        <!-- Valid To Column -->
+        <ng-container matColumnDef="validTo">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Valid To</th>
+          <td mat-cell *matCellDef="let policy">{{ policy.validTo | date:'dd-MMM-yyyy' }}</td>
+        </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Status</th>
+          <td mat-cell *matCellDef="let policy">
+            <span [class]="'px-3 py-1 rounded-full text-sm font-semibold ' + getStatusColor(getPolicyStatus(policy))">
+              {{ getPolicyStatus(policy) | titlecase }}
+            </span>
+          </td>
+        </ng-container>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="font-bold">Actions</th>
+          <td mat-cell *matCellDef="let policy">
+            <button mat-icon-button (click)="openEditDialog(policy)" matTooltip="Edit Policy" class="text-blue-600">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deactivatePolicy(policy)" matTooltip="Deactivate Policy"
+              class="text-red-600" [disabled]="getPolicyStatus(policy) === 'expired'">
+              <mat-icon>block</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+      </table>
+    </div>
+    <!-- Empty State -->
+    @if (filteredPolicies.length === 0) {
+    <div class="p-12 text-center">
+      <mat-icon class="text-6xl text-gray-300 mb-4">policy</mat-icon>
+      <h3 class="text-xl font-semibold text-gray-600 mb-2">No Policies Found</h3>
+      <p class="text-gray-500">{{ searchTerm || filterStatus !== 'all' ? 'Try adjusting your filters' : 'Create
+        your first policy to get started' }}</p>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Summary Cards -->
+  @if (!isLoading && policies.length > 0) {
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold">Active</h3>
+        <mat-icon class="text-3xl opacity-80">check_circle</mat-icon>
+      </div>
+      <p class="text-4xl font-bold">{{ getActivePoliciesCount() }}</p>
+    </div>
+    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl shadow-lg p-6 text-white">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold">Expiring Soon</h3>
+        <mat-icon class="text-3xl opacity-80">warning</mat-icon>
+      </div>
+      <p class="text-4xl font-bold">{{ getExpiringPoliciesCount() }}</p>
+    </div>
+    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-6 text-white">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold">Expired</h3>
+        <mat-icon class="text-3xl opacity-80">cancel</mat-icon>
+      </div>
+      <p class="text-4xl font-bold">{{ getExpiredPoliciesCount() }}</p>
+    </div>
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold">Total</h3>
+        <mat-icon class="text-3xl opacity-80">policy</mat-icon>
+      </div>
+      <p class="text-4xl font-bold">{{ policies.length }}</p>
+    </div>
+  </div>
+  }
+</div>

@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-interface User {
-  id?: string;
-  name: string;
-  email: string;
-  role: string;
-}
+import { MatDialog } from '@angular/material/dialog';
+import { MaterialModule } from '../../shared/material.module';
+import { UserService, User } from '../../../core/services/user.service';
+import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/confirm-dialog.component';
+import { UserEditDialogComponent } from '../../shared/dialogs/user-edit-dialog/user-edit-dialog.component';
+import { UserCreateDialogComponent } from '../../shared/dialogs/user-create-dialog/user-create-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [MaterialModule],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
@@ -21,16 +21,88 @@ export class UserListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   users: User[] = [];
+  isLoading = false;
 
-  constructor() { }
+  constructor(
+    private userService: UserService,
+    private dialog: MatDialog,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
-    // Mock data for now - replace with actual service call
-    this.users = [
-      { id: '1', name: 'Admin User', email: 'admin@medicare.com', role: 'Admin' },
-      { id: '2', name: 'Billing Staff', email: 'billing@medicare.com', role: 'BillingStaff' },
-      { id: '3', name: 'Insurance Staff', email: 'insurance@medicare.com', role: 'InsuranceStaff' }
-    ];
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.isLoading = true;
+    this.userService.getUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (users) => {
+          this.users = users;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching users:', error);
+          this.toastr.error('Failed to load users', 'Error');
+          this.isLoading = false;
+        }
+      });
+  }
+
+  createUser(): void {
+    const dialogRef = this.dialog.open(UserCreateDialogComponent, {
+      width: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUsers();
+      }
+    });
+  }
+
+  editUser(user: User): void {
+    const dialogRef = this.dialog.open(UserEditDialogComponent, {
+      width: '600px',
+      data: user
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUsers();
+      }
+    });
+  }
+
+  toggleUserStatus(user: User): void {
+    const action = user.isActive ? 'deactivate' : 'activate';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: `${action.charAt(0).toUpperCase() + action.slice(1)} User`,
+        message: `Are you sure you want to ${action} ${user.email}?`,
+        confirmText: action.charAt(0).toUpperCase() + action.slice(1),
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.updateUserStatus(user.userId, !user.isActive)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.toastr.success(`User ${action}d successfully`, 'Success');
+              this.loadUsers();
+            },
+            error: (error) => {
+              console.error('Error updating user status:', error);
+              this.toastr.error(error.error?.message || 'Failed to update user status', 'Error');
+            }
+          });
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,219 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material/prebuilt-themes/indigo-pink.css';
+@use 'ngx-toastr/toastr';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Material Icons Fix */
+.material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ===========================
+   Material Design Component Fixes
+   =========================== */
+
+/* Fix Material Select Dropdown */
+.mat-mdc-select-panel {
+    background: white !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.mat-mdc-option {
+    color: #333 !important;
+}
+
+.mat-mdc-option:hover {
+    background-color: #f5f5f5 !important;
+}
+
+/* Fix Material Dialog */
+.mat-mdc-dialog-container {
+    background: white !important;
+    overflow: hidden !important;
+    border-radius: 24px !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+}
+
+.mat-mdc-dialog-content {
+    overflow: hidden !important;
+    max-width: 100%;
+}
+
+.mat-mdc-dialog-title {
+    color: #333 !important;
+}
+
+/* Fix Material Buttons */
+.mat-mdc-button .mat-icon,
+.mat-mdc-raised-button .mat-icon {
+    font-family: 'Material Icons' !important;
+}
+
+/* Fix Material Table */
+.mat-mdc-table {
+    background: white !important;
+}
+
+.mat-mdc-header-row {
+    background-color: #f9fafb !important;
+}
+
+.mat-mdc-header-cell {
+    color: #000 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+.mat-mdc-cell {
+    color: #333 !important;
+}
+
+.mat-mdc-row:hover {
+    background-color: #f5f5f5 !important;
+}
+
+/* Fix Material Snackbar */
+.mat-mdc-snack-bar-container {
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Fix Material Tooltip */
+.mat-mdc-tooltip {
+    background: rgba(97, 97, 97, 0.9) !important;
+    color: white !important;
+}
+
+/* Fix Material Autocomplete */
+.mat-mdc-autocomplete-panel {
+    background: white !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix Material Menu */
+.mat-mdc-menu-panel {
+    background: white !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.mat-mdc-menu-item {
+    color: #333 !important;
+}
+
+.mat-mdc-menu-item:hover {
+    background-color: #f5f5f5 !important;
+}
+
+/* Fix Material Paginator */
+.mat-mdc-paginator {
+    background: white !important;
+}
+
+/* Fix Material Card */
+.mat-mdc-card {
+    background: white !important;
+}
+
+/* ===========================
+   Form Field Fixes
+   =========================== */
+
+/* Hide form field subscript wrapper to remove extra lines */
+.mat-mdc-form-field-subscript-wrapper {
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Disable Tailwind's border utilities for Material form fields */
+.mat-mdc-text-field-wrapper {
+    border: none !important;
+    outline: none !important;
+}
+
+/* Restore Material's native outline */
+.mat-mdc-text-field-wrapper .mat-mdc-notched-outline {
+    border-color: rgba(0, 0, 0, 0.38) !important;
+}
+
+.mat-mdc-text-field-wrapper:hover .mat-mdc-notched-outline {
+    border-color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.mat-focused .mat-mdc-notched-outline {
+    border-color: #3f51b5 !important;
+    border-width: 2px !important;
+}
+
+/* Ensure form fields don't cause overflow */
+.mat-mdc-form-field {
+    max-width: 100%;
+}
+
+/* ===========================
+   Table Styling
+   =========================== */
+
+/* Ensure table headers are visible and styled */
+.mat-mdc-table .mat-mdc-header-cell {
+    color: black !important;
+    font-weight: bold !important;
+}
+
+/* Add spacing to table headers */
+.mat-mdc-header-row {
+    min-height: 56px !important;
+}
+
+/* Add hover effect to table rows */
+.mat-mdc-row:hover {
+    background-color: #f5f5f5 !important;
+    cursor: pointer;
+}
+
+/* Table borders */
+.mat-mdc-table {
+    border: 1px solid #e0e0e0 !important;
+}
+
+.mat-mdc-row,
+.mat-mdc-header-row {
+    border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Fix sort header */
+.mat-sort-header-container {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.mat-sort-header-arrow {
+    color: rgba(0, 0, 0, 0.54) !important;
+}
