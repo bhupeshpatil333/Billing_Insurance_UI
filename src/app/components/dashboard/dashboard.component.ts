@@ -9,12 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, map, catchError } from 'rxjs/operators';
 
-interface DashboardStats {
-  patients: number;
-  bills: number;
-  revenue: number;
-  policies: number;
-}
+import { DashboardStats } from '../../core/Interfaces/interfaces';
 
 @Component({
   selector: 'app-dashboard',

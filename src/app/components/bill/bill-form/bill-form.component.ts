@@ -6,7 +6,8 @@ import { BillingService } from '../../../core/services/billing.service';
 import { PatientService } from '../../../core/services/patient.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ServiceService, ServiceItem } from '../../../core/services/service.service';
+import { ServiceService } from '../../../core/services/service.service';
+import { AppServiceItem, Patient } from '../../../core/Interfaces/interfaces';
 import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
@@ -22,7 +23,7 @@ export class BillFormComponent implements OnInit, OnDestroy {
   patientId!: number;
   isLoading: boolean = false;
   patients: any[] = [];
-  services: (ServiceItem & { quantity: number })[] = [];
+  services: (AppServiceItem & { quantity: number })[] = [];
 
   constructor(
     private billingService: BillingService,

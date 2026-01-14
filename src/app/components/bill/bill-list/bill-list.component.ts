@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MaterialModule } from '../../shared/material.module';
@@ -11,13 +10,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { ServiceService } from '../../../core/services/service.service';
-
-interface Service {
-  serviceId?: string;
-  serviceName: string;
-  cost: number;
-  quantity: number;
-}
+import { Patient, AppServiceItem, BillResponse } from '../../../core/Interfaces/interfaces';
 
 @Component({
   selector: 'app-bill-list',
@@ -30,8 +23,9 @@ export class BillListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Data
-  patients: any[] = [];
-  services: any[] = [];
+  // Data
+  patients: Patient[] = [];
+  services: (AppServiceItem & { quantity: number })[] = [];
 
   // Form data
   patientId: string = '';
@@ -44,7 +38,7 @@ export class BillListComponent implements OnInit, OnDestroy {
   netPayable: number = 0;
 
   // Result
-  billResult: any = null;
+  billResult: BillResponse | null = null;
 
   // Table columns
   displayedColumns: string[] = ['service', 'cost', 'qty'];
@@ -151,7 +145,7 @@ export class BillListComponent implements OnInit, OnDestroy {
     const payload = {
       patientId: parseInt(this.patientId, 10), // Ensure number
       services: selectedServices.map(s => ({
-        serviceId: parseInt(s.serviceId || '0', 10),
+        serviceId: s.serviceId,
         quantity: s.quantity
       }))
     };

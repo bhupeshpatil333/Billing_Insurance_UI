@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PaymentReportData, InsuranceReportData } from '../../core/Interfaces/interfaces';
 
 @Component({
   selector: 'app-reports',
@@ -22,8 +23,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   maxDate: Date = new Date();
 
   billingReport: any[] = [];
-  paymentReport: any = null;
-  insuranceReport: any = null;
+  paymentReport: PaymentReportData | null = null;
+  insuranceReport: InsuranceReportData | null = null;
 
   isLoading: boolean = false;
 

@@ -4,24 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-export interface ServiceItem {
-    serviceId: number;
-    serviceName: string;
-    cost: number;
-    isActive: boolean;
-}
-
-export interface CreateServiceRequest {
-    serviceName: string;
-    cost: number;
-    isActive: boolean;
-}
-
-interface ApiResponse<T> {
-    success: boolean;
-    message: string;
-    data: T;
-}
+import { ApiResponse, AppServiceItem, CreateServiceRequest } from '../Interfaces/interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -36,8 +19,8 @@ export class ServiceService {
      * Returns active services by default if called without admin context, 
      * but generally used for all services list in admin.
      */
-    getServices(): Observable<ServiceItem[]> {
-        return this.http.get<ApiResponse<ServiceItem[]>>(this.api).pipe(
+    getServices(): Observable<AppServiceItem[]> {
+        return this.http.get<ApiResponse<AppServiceItem[]>>(this.api).pipe(
             map(response => {
                 if (!response.success) throw new Error(response.message);
                 return response.data;
@@ -50,8 +33,8 @@ export class ServiceService {
      * POST /api/services
      * Admin only: create a new service
      */
-    createService(data: CreateServiceRequest): Observable<ServiceItem> {
-        return this.http.post<ApiResponse<ServiceItem>>(this.api, data).pipe(
+    createService(data: CreateServiceRequest): Observable<AppServiceItem> {
+        return this.http.post<ApiResponse<AppServiceItem>>(this.api, data).pipe(
             map(response => {
                 if (!response.success) throw new Error(response.message);
                 return response.data;
@@ -64,8 +47,8 @@ export class ServiceService {
      * PUT /api/services/{id}
      * Admin only: update service name or cost
      */
-    updateService(id: number, data: CreateServiceRequest): Observable<ServiceItem> {
-        return this.http.put<ApiResponse<ServiceItem>>(`${this.api}/${id}`, data).pipe(
+    updateService(id: number, data: CreateServiceRequest): Observable<AppServiceItem> {
+        return this.http.put<ApiResponse<AppServiceItem>>(`${this.api}/${id}`, data).pipe(
             map(response => {
                 if (!response.success) throw new Error(response.message);
                 return response.data;

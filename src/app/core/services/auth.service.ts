@@ -5,17 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface LoginResponse {
-  token: string;
-  role: string;
-  user?: any;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { LoginResponse, ApiResponse } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'

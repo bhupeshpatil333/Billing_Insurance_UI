@@ -3,7 +3,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../shared/material.module';
-import { ServiceService, ServiceItem, CreateServiceRequest } from '../../../core/services/service.service';
+import { ServiceService } from '../../../core/services/service.service';
+import { AppServiceItem, CreateServiceRequest } from '../../../core/Interfaces/interfaces';
 import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
@@ -22,7 +23,7 @@ export class ServiceDialogComponent implements OnInit {
         private serviceService: ServiceService,
         private notification: NotificationService,
         private dialogRef: MatDialogRef<ServiceDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ServiceItem | null
+        @Inject(MAT_DIALOG_DATA) public data: AppServiceItem | null
     ) {
         this.isEditMode = !!data;
         this.serviceForm = this.fb.group({

@@ -4,31 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface BillResponse {
-  billId: number;
-  patientId: number;
-  grossAmount: number;
-  insuranceAmount: number;
-  netPayable: number;
-  invoiceNumber: string;
-  status?: string;
-  insurancePercentage?: number;
-  createdAt: string;
-}
-
-export interface GenerateBillRequest {
-  patientId: number;
-  services: Array<{
-    serviceId: number;
-    quantity: number;
-  }>;
-}
+import { ApiResponse, BillResponse, GenerateBillRequest } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'

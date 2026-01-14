@@ -4,32 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-export interface User {
-    userId: string;
-    email: string;
-    role: 'Admin' | 'Billing' | 'Insurance';
-    isActive: boolean;
-}
-
-export interface CreateUserRequest {
-    email: string;
-    password: string;
-    role: 'Admin' | 'Billing' | 'Insurance';
-}
-
-export interface UpdateRoleRequest {
-    role: 'Admin' | 'Billing' | 'Insurance';
-}
-
-export interface UpdateStatusRequest {
-    isActive: boolean;
-}
-
-export interface ApiResponse<T> {
-    success: boolean;
-    message: string;
-    data: T;
-}
+import { User, CreateUserRequest, UpdateRoleRequest, UpdateStatusRequest, ApiResponse } from '../Interfaces/interfaces';
 
 @Injectable({
     providedIn: 'root'

@@ -4,26 +4,7 @@ import { environment } from '../../../environment/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface BillingReportItem {
-  title: string;
-  totalAmount: number;
-}
-
-export interface PaymentReportData {
-  totalPayments: number;
-  totalAmount: number;
-}
-
-export interface InsuranceReportData {
-  totalInsuranceCovered: number;
-  totalBills: number;
-}
+import { ApiResponse, BillingReportItem, PaymentReportData, InsuranceReportData } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
