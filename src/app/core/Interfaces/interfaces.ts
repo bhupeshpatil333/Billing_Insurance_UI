@@ -28,6 +28,7 @@ export interface LoginResponse {
     token: string;
     role: string;
     user?: any;
+    username?: string;
 }
 
 // Billing
