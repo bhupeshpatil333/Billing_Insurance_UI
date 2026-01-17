@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PaymentReportData, InsuranceReportData } from '../../core/Interfaces/interfaces';
 
 @Component({
   selector: 'app-reports',
@@ -22,8 +23,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   maxDate: Date = new Date();
 
   billingReport: any[] = [];
-  paymentReport: any = null;
-  insuranceReport: any = null;
+  paymentReport: PaymentReportData | null = null;
+  insuranceReport: InsuranceReportData | null = null;
 
   isLoading: boolean = false;
 
@@ -36,8 +37,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // Set default dates: January 1st of current year to Today
     const today = new Date();
+    // Set maxDate to the end of today to ensure today is selectable
+    this.maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+    // Set default dates: January 1st of current year to Today
     this.fromDate = new Date(today.getFullYear(), 0, 1); // 0 is January
     this.toDate = today;
   }

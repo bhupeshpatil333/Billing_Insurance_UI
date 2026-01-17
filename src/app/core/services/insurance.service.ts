@@ -4,33 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface InsuranceProvider {
-  id: string;
-  name: string;
-  contactInfo: string;
-}
-
-export interface Policy {
-  policyId?: number;
-  id?: string;
-  providerId?: string;
-  policyNumber: string;
-  coverageAmount: number;
-  coveragePercentage?: number;
-  validFrom?: string;
-  validTo?: string;
-}
-
-export interface AssignPolicyRequest {
-  patientId: number;
-  policyId: number;
-}
+import { ApiResponse, InsuranceProvider, Policy, AssignPolicyRequest } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'

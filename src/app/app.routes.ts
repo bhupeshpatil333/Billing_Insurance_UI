@@ -25,12 +25,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent) },
 
       // Admin only routes
       {
         path: 'users',
-        component: UserListComponent,
+        loadComponent: () => import('./components/user/user-list/user-list.component').then(m => m.UserListComponent),
         canActivate: [roleGuard],
         data: { roles: ['Admin'] }
       },
@@ -42,12 +42,12 @@ export const routes: Routes = [
       },
 
       // All authenticated users can access patients
-      { path: 'patients', component: PatientListComponent },
+      { path: 'patients', loadComponent: () => import('./components/patient/patient-list/patient-list.component').then(m => m.PatientListComponent) },
 
       // Insurance staff and admin
       {
         path: 'insurance',
-        component: InsuranceFormComponent,
+        loadComponent: () => import('./components/insurance/insurance-form/insurance-form.component').then(m => m.InsuranceFormComponent),
         canActivate: [roleGuard],
         data: { roles: ['Admin', 'Insurance'] }
       },
@@ -63,13 +63,13 @@ export const routes: Routes = [
       // Billing staff and admin
       {
         path: 'billing',
-        component: BillListComponent,
+        loadComponent: () => import('./components/bill/bill-list/bill-list.component').then(m => m.BillListComponent),
         canActivate: [roleGuard],
         data: { roles: ['Admin', 'Billing'] }
       },
 
-      { path: 'billing/:id', component: BillListComponent },
-      { path: 'payments', component: PaymentFormComponent },
+      { path: 'billing/:id', loadComponent: () => import('./components/bill/bill-list/bill-list.component').then(m => m.BillListComponent) },
+      { path: 'payments', loadComponent: () => import('./components/payment/payment-form/payment-form.component').then(m => m.PaymentFormComponent) },
 
       // Reports - Admin only
       // {
@@ -80,7 +80,7 @@ export const routes: Routes = [
       // }
       {
         path: 'reports',
-        component: ReportsComponent,
+        loadComponent: () => import('./components/reports/reports.component').then(m => m.ReportsComponent),
         canActivate: [authGuard, roleGuard],
         data: { roles: ['Admin'] }
       }

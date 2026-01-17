@@ -35,7 +35,6 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value)
         .subscribe({
           next: (res) => {
-            this.authService.saveToken(res.token, res.role);
             this.router.navigate(['/']);
             console.log('Login successful');
             this.isLoading = false;

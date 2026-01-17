@@ -4,6 +4,7 @@ import { MaterialModule } from '../../shared/material.module';
 import { PatientService } from '../../../core/services/patient.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Patient } from '../../../core/Interfaces/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -24,7 +25,7 @@ export class PatientListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   displayedColumns: string[] = ['fullName', 'dob', 'mobile', 'actions'];
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<Patient>;
   filterValue: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -35,7 +36,7 @@ export class PatientListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastr: ToastrService
   ) {
-    this.dataSource = new MatTableDataSource<any>([]);
+    this.dataSource = new MatTableDataSource<Patient>([]);
   }
 
   ngOnInit(): void {

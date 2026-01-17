@@ -17,6 +17,7 @@ import { ConfirmDialogComponent } from '../../components/shared/dialogs/confirm-
 export class MainLayoutComponent implements OnInit {
   userRole: string | null = null;
   isLoggingOut: boolean = false;
+  Username: string | null = null;
 
   constructor(
     public authService: AuthService,
@@ -26,6 +27,7 @@ export class MainLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
+    this.Username = this.authService.getUsername();
   }
 
   logout(): void {

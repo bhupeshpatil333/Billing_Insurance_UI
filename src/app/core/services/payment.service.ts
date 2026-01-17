@@ -4,17 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-export interface PaymentResponse {
-  billId: number;
-  status: string;
-  totalPaid: number;
-}
-
-export interface CreatePaymentRequest {
-  billId: number;
-  paidAmount: number;
-  paymentMode: 'Cash' | 'UPI' | 'Card';
-}
+import { PaymentResponse, CreatePaymentRequest } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'

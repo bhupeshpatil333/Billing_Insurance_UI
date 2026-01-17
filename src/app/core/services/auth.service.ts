@@ -5,17 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface LoginResponse {
-  token: string;
-  role: string;
-  user?: any;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { LoginResponse, ApiResponse } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -40,8 +30,8 @@ export class AuthService {
         return response.data;
       }),
       tap(loginData => {
-        if (loginData.token) {
-          this.saveToken(loginData.token, loginData.role);
+        if (loginData.token && loginData.role && loginData.username) {
+          this.saveToken(loginData.token, loginData.role, loginData.username);
           this.isAuthenticatedSubject.next(true);
           console.log('Login successful');
         }
@@ -50,9 +40,10 @@ export class AuthService {
     );
   }
 
-  saveToken(token: string, role: string): void {
+  saveToken(token: string, role: string, username: string): void {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
+    localStorage.setItem('username', username);
     this.isAuthenticatedSubject.next(true);
   }
 
@@ -62,6 +53,10 @@ export class AuthService {
 
   getRole(): string | null {
     return localStorage.getItem('role');
+  }
+
+  getUsername(): string | null {
+    return localStorage.getItem('username');
   }
 
   isLoggedIn(): boolean {

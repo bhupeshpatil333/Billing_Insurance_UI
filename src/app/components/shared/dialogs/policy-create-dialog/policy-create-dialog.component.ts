@@ -3,15 +3,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../material.module';
-import { InsuranceService, Policy } from '../../../../core/services/insurance.service';
+import { InsuranceService } from '../../../../core/services/insurance.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-
-export interface CreatePolicyRequest {
-    policyNumber: string;
-    coveragePercentage: number;
-    validFrom: string;
-    validTo: string;
-}
+import { CreatePolicyRequest, Policy } from '../../../../core/Interfaces/interfaces';
 
 @Component({
     selector: 'app-policy-create-dialog',

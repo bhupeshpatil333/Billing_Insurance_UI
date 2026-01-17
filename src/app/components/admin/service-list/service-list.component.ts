@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../shared/material.module';
 import { MatDialog } from '@angular/material/dialog';
-import { ServiceService, ServiceItem, CreateServiceRequest } from '../../../core/services/service.service';
+import { ServiceService } from '../../../core/services/service.service';
+import { AppServiceItem, CreateServiceRequest } from '../../../core/Interfaces/interfaces';
 import { ServiceDialogComponent } from '../service-dialog/service-dialog.component';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/confirm-dialog.component';
@@ -15,7 +16,7 @@ import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog/conf
     styleUrl: './service-list.component.scss'
 })
 export class ServiceListComponent implements OnInit {
-    services: ServiceItem[] = [];
+    services: AppServiceItem[] = [];
     isLoading = false;
     displayedColumns: string[] = ['name', 'cost', 'status', 'actions'];
 
@@ -32,7 +33,7 @@ export class ServiceListComponent implements OnInit {
     loadServices(): void {
         this.isLoading = true;
         this.serviceService.getServices().subscribe({
-            next: (data: ServiceItem[]) => {
+            next: (data: AppServiceItem[]) => {
                 this.services = data;
                 this.isLoading = false;
             },
@@ -43,7 +44,7 @@ export class ServiceListComponent implements OnInit {
         });
     }
 
-    openServiceDialog(service?: ServiceItem): void {
+    openServiceDialog(service?: AppServiceItem): void {
         const dialogRef = this.dialog.open(ServiceDialogComponent, {
             width: '450px',
             data: service || null
@@ -56,7 +57,7 @@ export class ServiceListComponent implements OnInit {
         });
     }
 
-    toggleServiceStatus(service: ServiceItem): void {
+    toggleServiceStatus(service: AppServiceItem): void {
         const newStatus = !service.isActive;
         const action = newStatus ? 'activate' : 'deactivate';
 

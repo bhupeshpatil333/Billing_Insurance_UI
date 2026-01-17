@@ -4,18 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../environment/environment';
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface Patient {
-  patientId?: number;
-  fullName: string;
-  mobile: string;
-  dob: string;
-}
+import { ApiResponse, Patient } from '../Interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
